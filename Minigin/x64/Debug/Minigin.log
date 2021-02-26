@@ -1,14 +1,5 @@
-﻿  Renderer.cpp
-  Minigin.vcxproj -> D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\x64\Debug\Minigin.exe
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2\lib\x64\SDL2.dll
-  1 File(s) copied
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\libjpeg-9.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\libpng16-16.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\libtiff-5.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\libwebp-7.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\SDL2_image.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_image\lib\x64\zlib1.dll
-  6 File(s) copied
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_ttf\lib\x64\libfreetype-6.dll
-  D:\Documents\2DAE\sem 2\Programming 4\Project\Minigin\3rdParty\SDL2_ttf\lib\x64\SDL2_ttf.dll
-  2 File(s) copied
+﻿     Creating library D:\Documents\2DAE\sem 2\Programming 4\Project\QBert-GameEngine\x64\Debug\Minigin.lib and object D:\Documents\2DAE\sem 2\Programming 4\Project\QBert-GameEngine\x64\Debug\Minigin.exp
+SDL2main.lib(SDL_windows_main.obj) : error LNK2019: unresolved external symbol SDL_main referenced in function main_utf8
+    Hint on symbols that are defined and could potentially match:
+      "int __cdecl Engine::SDL_main(int,char * * const)" (?SDL_main@Engine@@YAHHQEAPEAD@Z)
+D:\Documents\2DAE\sem 2\Programming 4\Project\QBert-GameEngine\x64\Debug\Minigin.exe : fatal error LNK1120: 1 unresolved externals

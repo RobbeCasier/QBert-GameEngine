@@ -2,7 +2,7 @@
 struct SDL_Window;
 namespace dae
 {
-	class Minigin
+	class __declspec(dllexport) Minigin
 	{
 	public:
 		void Initialize();

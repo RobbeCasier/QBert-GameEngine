@@ -2,6 +2,11 @@
 #include "TextComponent.h"
 #include "GameObject.h"
 
+void dae::TextComponent::Initialize()
+{
+	m_TransformComponent = std::make_shared<Transform>();
+}
+
 void dae::TextComponent::Update()
 {
 	if (m_NeedsUpdate)
@@ -17,10 +22,15 @@ void dae::TextComponent::Update()
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_FreeSurface(surf);
-		RenderComponent* renderComp = m_GameObject->GetComponent<RenderComponent>();
-		renderComp->SetTexture(std::make_shared<Texture2D>(texture));
+		m_Texture = std::make_shared<Texture2D>(texture);
 		m_NeedsUpdate = false;
 	}
+}
+
+void dae::TextComponent::Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position)
+{
+	glm::vec3 worldPos = m_TransformComponent->GetPosition() + position;
+	renderComponent->Render(*m_Texture, worldPos);
 }
 
 // This implementation uses the "dirty flag" pattern
@@ -40,5 +50,10 @@ void TextComponent::SetColor(const SDL_Color& color)
 {
 	m_Color = color;
 	m_NeedsUpdate = true;
+}
+
+void dae::TextComponent::SetPosition(float x, float y)
+{
+	m_TransformComponent->SetPosition(x, y, 0.f);
 }
 

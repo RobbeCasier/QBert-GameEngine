@@ -25,7 +25,7 @@ void FPS::Update()
 
 void FPS::SetTextFontColor(const std::string& text, std::shared_ptr<Font>& font, const SDL_Color& color)
 {
-	TextComponent* txtComp = m_GameObject->GetComponent<TextComponent>();
+	std::shared_ptr<TextComponent> txtComp = m_GameObject->GetComponent<TextComponent>();
 	txtComp->SetFont(font);
 	txtComp->SetText(text);
 	txtComp->SetColor(color);

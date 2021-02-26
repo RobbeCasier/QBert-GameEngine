@@ -5,10 +5,12 @@
 #include <glm/vec3.hpp>
 
 #pragma warning(pop)
+
 namespace dae {
 	class GameObject;
 }
 
+class RenderComponent;
 using namespace dae;
 class BaseComponent
 {
@@ -25,9 +27,10 @@ public:
 
 	virtual void Initialize() = 0;
 	virtual void Update() = 0;
+	virtual void Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position) { position; };
 
 	void SetGameObject(GameObject* gameObject) { m_GameObject = gameObject; };
 protected:
-	GameObject* m_GameObject;
+	GameObject* m_GameObject = nullptr;
 };
 

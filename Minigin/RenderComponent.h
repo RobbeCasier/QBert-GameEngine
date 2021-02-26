@@ -11,9 +11,6 @@ public:
 
     virtual void Initialize() override {};
     virtual void Update() override {};
-    void SetTexture(std::shared_ptr<Texture2D> pTexture) { m_pTexture = pTexture; }
-    void Render(const glm::vec3& position) const;
-private:
-    std::shared_ptr<Texture2D> m_pTexture = nullptr;
+    void Render(const Texture2D& texture, const glm::vec3& position) const;
 };
 

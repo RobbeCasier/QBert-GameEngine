@@ -2,7 +2,7 @@
 #include "RenderComponent.h"
 #include "Renderer.h"
 
-void RenderComponent::Render(const glm::vec3& position) const
+void RenderComponent::Render(const Texture2D& texture, const glm::vec3& position) const
 {
-	Renderer::GetInstance().RenderTexture(*m_pTexture, position.x, position.y);
+	Renderer::GetInstance().RenderTexture(texture, position.x, position.y);
 }

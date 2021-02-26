@@ -15,9 +15,9 @@ namespace dae
 		void Render() const;
 
 		template<typename ComponentType>
-		ComponentType* AddComponent()
+		std::shared_ptr<ComponentType> AddComponent()
 		{
-			auto pComponent = new ComponentType();
+			auto pComponent = std::make_shared<ComponentType>();
 			m_Components.push_back(pComponent);
 			m_Components[m_Components.size() - 1]->SetGameObject(this);
 			m_Components[m_Components.size() - 1]->Initialize();
@@ -25,15 +25,15 @@ namespace dae
 		}
 
 		template<typename ComponentType>
-		ComponentType* GetComponent() const
+		std::shared_ptr<ComponentType> GetComponent() const
 		{
 			auto component = std::find_if(m_Components.begin(), m_Components.end(),
-				[](BaseComponent* component)
+				[](std::shared_ptr<BaseComponent> component)
 				{
 					return typeid(*component).name() == typeid(ComponentType).name();
 				});
 			if (component != m_Components.end())
-				return (ComponentType*)*component;
+				return std::dynamic_pointer_cast<ComponentType>(*component);
 			return nullptr;
 		}
 
@@ -43,10 +43,7 @@ namespace dae
 		GameObject() { Initialize(); };
 		~GameObject()
 		{
-			for (auto element: m_Components)
-			{
-				delete element;
-			}
+
 		};
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
@@ -54,9 +51,9 @@ namespace dae
 		GameObject& operator=(GameObject&& other) = delete;
 
 	private:
-		std::vector<BaseComponent*> m_Components;
-		Transform* m_pTransformComponent;
-		RenderComponent* m_pRenderComponent;
-		TextureComponent* m_pTextureComponent;
+		std::vector<std::shared_ptr<BaseComponent>> m_Components;
+		std::shared_ptr<Transform> m_pTransformComponent;
+		std::shared_ptr<RenderComponent> m_pRenderComponent;
+		std::shared_ptr<TextureComponent> m_pTextureComponent;
 	};
 }
