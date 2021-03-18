@@ -17,6 +17,7 @@
 #include "PlayerComponent.h"
 #include "Observer.h"
 #include "UIComponent.h"
+#include "ServiceLocator.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -51,6 +52,11 @@ void dae::Minigin::LoadGame() const
 {
 	auto& scene = SceneManager::GetInstance().CreateScene("Demo");
 	auto& input = InputManager::GetInstance();
+	ServiceLocator::RegisterSoundSystem(std::make_shared<SDL_Sound_System>(SDL_Sound_System()));
+	auto& audio = ServiceLocator::GetSoundSystem();
+	audio.RegisterAudio(1, "../sound/message_dada dam da dam.wav");
+	audio.RegisterAudio(2, "../sound/Thunderstruck.wav");
+	audio.PlayMusic(2, 100);
 
 	//--------//
 	//week 1-2//
