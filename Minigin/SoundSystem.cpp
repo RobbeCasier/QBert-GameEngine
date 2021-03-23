@@ -1,42 +1,74 @@
 #include "MiniginPCH.h"
 #include "SoundSystem.h"
+#include <cassert>
 
-void SDL_Sound_System::PlayMusic(const unsigned int& id, const int& volume, bool isLoop)
+unsigned short SoundSystem::m_NrPending = 0;
+
+void SDL_Sound_System::Update()
 {
-	if (SDL_Init(SDL_INIT_AUDIO)<0)
+	//if equal, there is nothing to play
+	if (m_Head == m_Tail)
 		return;
 
-	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	//get file from map and create chunk
-	std::string assetFile = m_AudioList.at(id);
-	Mix_Music* sound = Mix_LoadMUS(assetFile.c_str());
-
-	//play on channel
-	if (isLoop)
-		Mix_PlayMusic(sound, -1);
-	else
-		Mix_PlayMusic(sound, 0);
-
-	//set volume
-	Mix_Volume(-1, volume);
-}
-
-void SDL_Sound_System::PlayEffect(const unsigned int& id, const int& volume, bool isLoop)
-{
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 		return;
 
-	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-	//get file from map and create chunk
-	std::string assetFile = m_AudioList.at(id);
-	Mix_Chunk* sound = Mix_LoadWAV(assetFile.c_str());
+	//get filepath
+	std::string assetFile = m_AudioList.at(m_Pending[m_Head].id);
 
-	//play on channel
-	if (isLoop)
-		Mix_PlayChannel(-1,sound, -1);
+	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+	//switch between the two types of autio
+	if (m_Pending[m_Head].isEffect)
+	{
+		//load chunk
+		Mix_Chunk* effect = Mix_LoadWAV(assetFile.c_str());
+
+		//is it loop or not
+		if (m_Pending[m_Head].isLoop)
+			Mix_PlayChannel(-1, effect, -1);
+		else
+			Mix_PlayChannel(-1, effect, 0);
+	}
 	else
-		Mix_PlayChannel(-1, sound, 0);
+	{
+		//load music
+		Mix_Music* music = Mix_LoadMUS(assetFile.c_str());
+
+		//is it loop or not
+		if (m_Pending[m_Head].isLoop)
+			Mix_PlayMusic(music, -1);
+		else
+			Mix_PlayMusic(music, 0);
+	}
 
 	//set volume
-	Mix_Volume(-1, volume);
+	Mix_Volume(-1, m_Pending[m_Head].volume);
+
+	//go to next sound in list
+	m_Head = (m_Head + 1) % m_MaxPendingRequests;
+}
+
+void SDL_Sound_System::PlayMusic(const unsigned int& id, const unsigned int& volume, bool isLoop)
+{
+	assert((m_Tail + 1) % m_MaxPendingRequests != m_Head);
+
+	m_Pending[m_Tail].id = id;
+	m_Pending[m_Tail].volume = volume;
+	m_Pending[m_Tail].isEffect = false;
+	m_Pending[m_Tail].isLoop = isLoop;
+
+	m_Tail = (m_Tail + 1) % m_MaxPendingRequests;
+}
+
+
+void SDL_Sound_System::PlayEffect(const unsigned int& id, const unsigned int& volume, bool isLoop)
+{
+	assert((m_Tail + 1) % m_MaxPendingRequests != m_Head);
+
+	m_Pending[m_Tail].id = id;
+	m_Pending[m_Tail].volume = volume;
+	m_Pending[m_Tail].isEffect = true;
+	m_Pending[m_Tail].isLoop = isLoop;
+
+	m_Tail = (m_Tail + 1) % m_MaxPendingRequests;
 }

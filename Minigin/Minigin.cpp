@@ -174,6 +174,7 @@ void dae::Minigin::Run()
 		auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
 		auto& input = InputManager::GetInstance();
+		auto& audio = ServiceLocator::GetSoundSystem();
 
 		auto& time = Time::GetInstance();
 		bool doContinue = true;
@@ -188,6 +189,7 @@ void dae::Minigin::Run()
 			input.HandleInput();
 
 			sceneManager.Update();
+			audio.Update();
 			renderer.Render();
 
 			const auto sleepTime = currentTime + milliseconds(MsPerFrame) - high_resolution_clock::now();
