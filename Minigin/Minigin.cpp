@@ -56,7 +56,7 @@ void dae::Minigin::LoadGame() const
 	auto& audio = ServiceLocator::GetSoundSystem();
 	audio.RegisterAudio(1, "../sound/message_dada dam da dam.wav");
 	audio.RegisterAudio(2, "../sound/Thunderstruck.wav");
-	audio.PlayMusic(2, 100);
+	audio.Play(2, 100, false, false);
 
 	//--------//
 	//week 1-2//
@@ -174,7 +174,10 @@ void dae::Minigin::Run()
 		auto& renderer = Renderer::GetInstance();
 		auto& sceneManager = SceneManager::GetInstance();
 		auto& input = InputManager::GetInstance();
+
 		auto& audio = ServiceLocator::GetSoundSystem();
+		std::thread audioThread(&SoundSystem::LoadAndPlay, &audio);
+		audioThread.detach();
 
 		auto& time = Time::GetInstance();
 		bool doContinue = true;
@@ -189,13 +192,11 @@ void dae::Minigin::Run()
 			input.HandleInput();
 
 			sceneManager.Update();
-			audio.Update();
 			renderer.Render();
 
 			const auto sleepTime = currentTime + milliseconds(MsPerFrame) - high_resolution_clock::now();
 			this_thread::sleep_for(sleepTime);
 		}
 	}
-
 	Cleanup();
 }

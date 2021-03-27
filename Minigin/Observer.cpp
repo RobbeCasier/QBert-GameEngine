@@ -18,24 +18,24 @@ void ScoreDisplay::OnNotify(std::shared_ptr<PlayerComponent> actor, const std::s
 	{
 		std::cout << "Changed Color" << std::endl;
 		m_UI->SetText(std::to_string(actor->GetScore()));
-		ServiceLocator::GetSoundSystem().PlayEffect(1, 100);
+		ServiceLocator::GetSoundSystem().Play(1, 100);
 	}
 	else if (event == "BEAT_COILY")
 	{
 		std::cout << "Beat Coily" << std::endl;
 		m_UI->SetText(std::to_string(actor->GetScore()));
-		ServiceLocator::GetSoundSystem().PlayEffect(1, 100);
+		ServiceLocator::GetSoundSystem().Play(1, 100);
 	}
 	else if (event == "REMAINING_DISC")
 	{
 		std::cout << "Remaining disc" << std::endl;
 		m_UI->SetText(std::to_string(actor->GetScore()));
-		ServiceLocator::GetSoundSystem().PlayEffect(1, 100);
+		ServiceLocator::GetSoundSystem().Play(1, 100);
 	}
 	else if (event == "CATCH")
 	{
 		std::cout << "Catched Slick/Sam" << std::endl;
 		m_UI->SetText(std::to_string(actor->GetScore()));
-		ServiceLocator::GetSoundSystem().PlayEffect(1, 100);
+		ServiceLocator::GetSoundSystem().Play(1, 100);
 	}
 }
