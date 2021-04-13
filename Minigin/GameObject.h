@@ -37,7 +37,6 @@ namespace dae
 			return nullptr;
 		}
 
-		void SetTexture(const std::string& fileName);
 		void SetPosition(float x, float y);
 
 		GameObject() { Initialize(); };

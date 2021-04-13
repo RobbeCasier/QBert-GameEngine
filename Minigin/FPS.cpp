@@ -2,7 +2,7 @@
 #include "FPS.h"
 
 #include "GameObject.h"
-#include "Time.h"
+#include "GameTime.h"
 #include "TextComponent.h"
 
 void FPS::Initialize()

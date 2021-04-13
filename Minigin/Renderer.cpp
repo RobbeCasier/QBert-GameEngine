@@ -41,23 +41,7 @@ void dae::Renderer::Render() const
 	//bool showDemo = true;
 	SDL_RenderClear(m_Renderer);
 
-	SceneManager::GetInstance().Render();
-
-	ImGui_ImplOpenGL2_NewFrame();
-	ImGui_ImplSDL2_NewFrame(m_Window);
-	ImGui::NewFrame();
-	/*if (showDemo)
-		ImGui::ShowDemoWindow(&showDemo);*/
-	int x, y;
-	SDL_GetWindowSize(m_Window, &x, &y);
-
-	ImGui::SetWindowSize({ 120, 100 });
-	ImGui::SetWindowPos({ float(x/2 - 60), float(y/2+50) });
-	ImGui::Button("Single Player");
-	ImGui::Button("Co-Op");
-	ImGui::Button("Versus");
-	ImGui::Render();
-	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+	SceneManager::GetInstance().Render(m_Window);
 	
 	SDL_RenderPresent(m_Renderer);
 }
@@ -92,4 +76,22 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	dst.w = static_cast<int>(width);
 	dst.h = static_cast<int>(height);
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
+}
+
+void dae::Renderer::RenderTexture(const Texture2D& texture, float dstX, float dstY, float dstWidth, float dstHeight, float srcX, float srcY, float width, float height) const
+{
+	//set dstRect
+	SDL_Rect dst;
+	dst.x = static_cast<int>(dstX);
+	dst.y = static_cast<int>(dstY);
+	dst.w = static_cast<int>(dstWidth);
+	dst.h = static_cast<int>(dstHeight);
+
+	//set srcRect
+	SDL_Rect src;
+	src.x = static_cast<int>(srcX);
+	src.y = static_cast<int>(srcY);
+	src.w = static_cast<int>(width);
+	src.h = static_cast<int>(height);
+	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &src, &dst);
 }

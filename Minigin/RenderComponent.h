@@ -12,5 +12,6 @@ public:
     virtual void Initialize() override {};
     virtual void Update() override {};
     void Render(const Texture2D& texture, const glm::vec3& position) const;
+    void Render(const Texture2D& texture, const glm::vec3& position, float dstWidth, float dstHeight, const glm::vec2& src, float width, float height) const;
 };
 

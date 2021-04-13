@@ -17,7 +17,7 @@ public:
 		m_Observers.erase(observerLocation);
 	}
 
-	void Notify(std::shared_ptr<PlayerComponent> actor, const std::string& event)
+	void Notify(std::shared_ptr<BaseComponent> actor, const std::string& event)
 	{
 		for (auto &element: m_Observers)
 		{

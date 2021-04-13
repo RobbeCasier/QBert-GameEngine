@@ -1,26 +1,32 @@
 #pragma once
 #include "SceneManager.h"
+#include <backends\imgui_impl_sdl.h>
 
 namespace dae
 {
 	class GameObject;
 	class Scene
 	{
-		friend Scene& SceneManager::CreateScene(const std::string& name);
 	public:
 		void Add(const std::shared_ptr<GameObject>& object);
 
-		void Update();
-		void Render() const;
+		void RootInitialize();
+		void RootUpdate();
+		void RootRender(SDL_Window* window) const;
 
-		~Scene();
+		virtual ~Scene();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;
 		Scene& operator=(const Scene& other) = delete;
 		Scene& operator=(Scene&& other) = delete;
 
+		Scene(const std::string& name);
+	protected:
+		virtual void Initialize() = 0;
+		virtual void Update() = 0;
+		virtual void Render(SDL_Window* window) const = 0;
+
 	private: 
-		explicit Scene(const std::string& name);
 
 		std::string m_Name;
 		std::vector < std::shared_ptr<GameObject>> m_Objects{};

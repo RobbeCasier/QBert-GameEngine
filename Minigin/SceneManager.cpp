@@ -6,21 +6,20 @@ void dae::SceneManager::Update()
 {
 	for(auto& scene : m_Scenes)
 	{
-		scene->Update();
+		scene->RootUpdate();
 	}
 }
 
-void dae::SceneManager::Render()
+void dae::SceneManager::Render(SDL_Window* window)
 {
 	for (const auto& scene : m_Scenes)
 	{
-		scene->Render();
+		scene->RootRender(window);
 	}
 }
 
-dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
+void dae::SceneManager::AddScene(Scene* scene)
 {
-	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
-	m_Scenes.push_back(scene);
-	return *scene;
+	m_Scenes.push_back(std::shared_ptr<Scene>(scene));
+	scene->RootInitialize();
 }

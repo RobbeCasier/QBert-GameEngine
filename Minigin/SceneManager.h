@@ -1,5 +1,6 @@
 #pragma once
 #include "Singleton.h"
+#include <backends\imgui_impl_sdl.h>
 
 namespace dae
 {
@@ -7,10 +8,10 @@ namespace dae
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
-		Scene& CreateScene(const std::string& name);
+		void AddScene(Scene* scene);
 
 		void Update();
-		void Render();
+		void Render(SDL_Window* window);
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;

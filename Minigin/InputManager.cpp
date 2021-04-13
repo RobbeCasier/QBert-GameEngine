@@ -1,6 +1,6 @@
 #include "MiniginPCH.h"
 #include "InputManager.h"
-#include <SDL.h>
+#include "SDL.h"
 
 void dae::InputManager::AddInput( ControllerButton inputKey, std::unique_ptr<Command> command)
 {

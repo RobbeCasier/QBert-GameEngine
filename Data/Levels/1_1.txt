@@ -1,0 +1,10 @@
+#Types are SINGLE = 0, DOUBLE = 1, REPEAT = 2
+<TYPE> 0
+
+#Base color of the cube
+#aqua = 0
+#orange = 1
+<COLOR> 0
+
+#Order of color according to the png
+<ORDER> 2 1
