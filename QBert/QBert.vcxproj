@@ -183,7 +183,10 @@
   <ItemGroup>
     <ClCompile Include="BlockComponent.cpp" />
     <ClCompile Include="CellComponent.cpp" />
+    <ClCompile Include="Coily.cpp" />
+    <ClCompile Include="Disc.cpp" />
     <ClCompile Include="GameObservers.cpp" />
+    <ClCompile Include="Graph.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="LevelReader.cpp" />
     <ClCompile Include="LevelScene.cpp" />
@@ -197,11 +200,19 @@
     </ClCompile>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Slick_Sam.cpp" />
+    <ClCompile Include="Spawner.cpp" />
+    <ClCompile Include="Ugg_Wrongway.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockComponent.h" />
     <ClInclude Include="CellComponent.h" />
+    <ClInclude Include="Coily.h" />
+    <ClInclude Include="Disc.h" />
+    <ClInclude Include="EnemyController.h" />
     <ClInclude Include="GameObservers.h" />
+    <ClInclude Include="GeneralStruct.h" />
+    <ClInclude Include="Graph.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridController.h" />
     <ClInclude Include="LevelReader.h" />
@@ -211,6 +222,10 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerController.h" />
+    <ClInclude Include="Slick_Sam.h" />
+    <ClInclude Include="Spawner.h" />
+    <ClInclude Include="Ugg_Wrongway.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Minigin\Minigin.vcxproj">

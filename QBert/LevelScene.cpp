@@ -4,10 +4,12 @@
 #include <GameObject.h>
 #include <UIComponent.h>
 #include "Player.h"
+#include "Coily.h"
 #include <InputManager.h>
 #include "PlayerController.h"
 #include "GameObservers.h"
 #include <ServiceLocator.h>
+#include "Spawner.h"
 
 void LevelScene::Initialize()
 {
@@ -38,12 +40,14 @@ void LevelScene::Initialize()
 	std::shared_ptr<RoundsDisplay> roundDisplay = std::make_shared<RoundsDisplay>(text);
 	Add(go);
 
+
+
 	//grid
 	auto gridObj = std::make_shared<GameObject>();
 	m_Grid = gridObj->AddComponent<Grid>();
 	m_Grid->AddObserver(levelDisplay);
 	m_Grid->AddObserver(roundDisplay);
-	m_Grid->SetTopPiramid(9, 1);
+	m_Grid->SetTopPiramid(9, 3);
 	m_Reader.Read("../Data/Levels/1_1.txt");
 	Add(gridObj);
 
@@ -51,15 +55,23 @@ void LevelScene::Initialize()
 	go = std::make_shared<GameObject>();
 	m_Player = go->AddComponent<Player>();
 	m_Player->SetGrid(m_Grid);
-	m_Player->SetGridPosition(9, 1);
+	m_Player->SetStartLocation(9, 3);
+
 	m_Player->AddObserver(livesDisplayP1);
 	m_Player->AddObserver(scoreDisplayP1);
+	Add(go);
+
 	m_Grid->ConstructPiramid(m_Player, (SideColor)m_Reader.GetColor(), m_Reader.GetOrder());
+	m_Grid->ConstructDiscs((SideColor)m_Reader.GetColor(), m_Reader.GetDiscs());
 	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(m_Player));
 	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(m_Player));
 	input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(m_Player));
 	input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(m_Player));
-	Add(go);
+
+	m_Spawner = std::make_shared<Spawner>(shared_from_this(), m_Grid, m_Player);
+	m_Spawner->Initialize();
+	std::shared_ptr<PlayerDeath> playerDeath = std::make_shared<PlayerDeath>(m_Spawner);
+	m_Player->AddObserver(playerDeath);
 }
 
 void LevelScene::Update()
@@ -72,9 +84,12 @@ void LevelScene::Update()
 			int rnd = m_Grid->GetCurrentRound();
 			std::string file = "../Data/Levels/" + std::to_string(lv) + "_" + std::to_string(rnd) + ".txt";
 			m_Reader.Read(file);
-			m_Grid->NewPiramid((SideColor)m_Reader.GetColor(), m_Reader.GetOrder());
-			m_Player->SetGridPosition(9, 1);
+			m_Grid->NewPiramid((GameType)m_Reader.GetStyle(), (SideColor)m_Reader.GetColor(), m_Reader.GetOrder());
+			m_Grid->NewDiscs((SideColor)m_Reader.GetColor(), m_Reader.GetDiscs());
+			m_Player->SetStartLocation(9, 3);
+			m_Spawner->Clear();
 		}
+		m_Spawner->Update();
 	}
 }
 

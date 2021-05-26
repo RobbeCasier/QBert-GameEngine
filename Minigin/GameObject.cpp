@@ -16,7 +16,8 @@ void dae::GameObject::Update()
 		std::for_each(m_Components.begin(), m_Components.end(),
 			[](std::shared_ptr<BaseComponent> component)
 			{
-				component->Update();
+				if (component != nullptr)
+					component->Update();
 			});
 	}
 }
@@ -25,7 +26,8 @@ void dae::GameObject::Render() const
 {
 	for (auto element: m_Components)
 	{
-		element->Render(m_pRenderComponent, m_pTransformComponent->GetPosition());
+		if (element != nullptr)
+			element->Render(m_pRenderComponent, m_pTransformComponent->GetPosition());
 	}
 }
 

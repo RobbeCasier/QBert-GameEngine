@@ -16,5 +16,6 @@
 #include <Windows.h>
 
 // add headers that you want to pre-compile here
-
+#include "Utility.h"
+#include "GeneralStruct.h"
 #endif //PCH_H

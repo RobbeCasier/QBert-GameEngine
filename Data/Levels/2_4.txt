@@ -1,0 +1,19 @@
+#Types are SINGLE = 0, DOUBLE = 1, REPEAT = 2
+<TYPE> 1
+
+#Base color of the cube
+#aqua = 0
+#orange = 1
+#grey = 2
+#greyBlue = 3
+#black = 4
+#yellowOrange = 5
+#yellowBlue = 6
+#gree = 7
+#blackBlack = 8
+<COLOR> 4
+
+#Order of color according to the png
+<ORDER> 1 0 2
+
+<DISC> 7,1 13,3

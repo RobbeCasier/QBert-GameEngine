@@ -12,12 +12,22 @@ void BlockComponent::Initialize()
 
 void BlockComponent::AddPlayerCommand(std::shared_ptr<PlayerComponent> player)
 {
-	m_BlockChangePlayer = std::make_unique<ChangeColorPlayer>(player);
+	m_BlockChangePlayerFinal = std::make_unique<ChangeColorPlayerFinal>(player);
+}
+
+void BlockComponent::AddPlayerCommandInter(std::shared_ptr<PlayerComponent> player)
+{
+	m_BlockChangePlayerInter = std::make_unique<ChangeColorPlayerIntermediat>(player);
 }
 
 void BlockComponent::AddGridCommand(std::shared_ptr<Grid> grid)
 {
 	m_BlockChangeGrid = std::make_unique<ChangeColorGrid>(grid);
+}
+
+void BlockComponent::SetGameType(GameType type)
+{
+	m_Type = type;
 }
 
 void BlockComponent::SetIsSide(bool isSide)
@@ -61,13 +71,16 @@ void BlockComponent::SetTexture(SideColor color, int width, int height)
 	default:
 		break;
 	}
-	m_TextureComponent->SetTexture(assetFile, width, height);
+	m_TextureComponent->SetTexture(assetFile);
+	if (width > 0)
+		m_TextureComponent->SetSize(width, height);
 }
 
 void BlockComponent::SetColorOrder(std::vector<int> colorOrder)
 {
 	m_ColorOrder = colorOrder;
 	m_CurrentColor = 0;
+	m_HasReachedFinalColorOnce = false;
 	//set the sourceRect
 	//col 0 is the side
 	int col = 0, row = 0;
@@ -83,14 +96,36 @@ void BlockComponent::SetTextureDestination(glm::vec3 dst)
 	m_TextureComponent->SetPosition(m_TextureDst.x, m_TextureDst.y);
 }
 
-void BlockComponent::ChangeColor()
+void BlockComponent::ChangeColor(bool reset)
 {
-	if (m_CurrentColor == m_ColorOrder.size() - 1)
+	if (reset)
+	{
+		m_CurrentColor = 0;
+		int col = 0, row = 0;
+		if (!m_isSide)
+			col = 1;
+		row = m_ColorOrder[m_CurrentColor];
+		m_TextureComponent->SetSource(col, row, 2, 6);
 		return;
-	else
+	}
+	//change the bool, so no extra points are given in the repeat mode
+	if (m_CurrentColor == m_ColorOrder.size() - 1)
+	{
+		m_HasReachedFinalColorOnce = true;
+	}
+	if (m_Type == GameType::RepeatSingleColor || m_CurrentColor != m_ColorOrder.size() - 1)
 	{
 		++m_CurrentColor;
-		m_BlockChangePlayer->Execute();
+		m_CurrentColor = m_CurrentColor % m_ColorOrder.size();
+		//don't add score when you are in the repeat
+		if (!m_HasReachedFinalColorOnce && m_CurrentColor != m_ColorOrder.size() - 1)
+		{
+			m_BlockChangePlayerInter->Execute();
+		}
+		else if (!m_HasReachedFinalColorOnce && m_CurrentColor == m_ColorOrder.size() - 1)
+		{
+			m_BlockChangePlayerFinal->Execute();
+		}
 		m_BlockChangeGrid->Execute();
 		int col = 0, row = 0;
 		if (!m_isSide)

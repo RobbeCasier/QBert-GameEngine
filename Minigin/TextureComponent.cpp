@@ -19,17 +19,9 @@ void TextureComponent::Render(std::shared_ptr<RenderComponent> renderComponent, 
 		renderComponent->Render(*m_Texture, worldPos);
 }
 
-void TextureComponent::SetTexture(const std::string& filename, int width, int height)
+void TextureComponent::SetTexture(const std::string& filename)
 {
 	m_Texture = ResourceManager::GetInstance().LoadTexture(filename);
-
-	if (width == 0)
-		return;
-	if (height == 0)
-		m_Height = (float)width;
-	else
-		m_Height = (float)height;
-	m_Width = (float)width;
 }
 
 void TextureComponent::SetPosition(float x, float y)
@@ -47,4 +39,24 @@ void TextureComponent::SetSource(const int& col, const int& row, const int& nrCo
 	m_SrcRect.w = w / nrCol;
 	m_SrcRect.h = h / nrRow;
 	m_HasSourceRect = true;
+}
+
+void TextureComponent::SetSize(const int& width, const int& height)
+{
+	m_Height = (float)height;
+	m_Width = (float)width;
+}
+
+int TextureComponent::GetWidth()
+{
+	int x, y;
+	SDL_QueryTexture(m_Texture->GetSDLTexture(), 0, 0, &x, &y);
+	return x;
+}
+
+int TextureComponent::GetHeight()
+{
+	int x, y;
+	SDL_QueryTexture(m_Texture->GetSDLTexture(), 0, 0, &x, &y);
+	return y;
 }

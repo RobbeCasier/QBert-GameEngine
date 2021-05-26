@@ -30,6 +30,7 @@ public:
 	virtual void Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position) { position; };
 
 	void SetGameObject(GameObject* gameObject) { m_GameObject = gameObject; };
+	GameObject* GetGameObject() { return m_GameObject; }
 protected:
 	GameObject* m_GameObject = nullptr;
 };

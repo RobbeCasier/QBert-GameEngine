@@ -15,6 +15,16 @@ void Scene::Add(const std::shared_ptr<GameObject>& object)
 	m_Objects.push_back(object);
 }
 
+void dae::Scene::Remove(std::shared_ptr<GameObject> object)
+{
+	auto it = std::find(m_Objects.begin(), m_Objects.end(), object);
+	if (it != m_Objects.end())
+	{
+		m_Objects.erase(it);
+		object.reset();
+	}
+}
+
 void dae::Scene::RootInitialize()
 {
 	Initialize();

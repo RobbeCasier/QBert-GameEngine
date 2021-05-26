@@ -4,7 +4,16 @@
 #Base color of the cube
 #aqua = 0
 #orange = 1
+#grey = 2
+#greyBlue = 3
+#black = 4
+#yellowOrange = 5
+#yellowBlue = 6
+#gree = 7
+#blackBlack = 8
 <COLOR> 1
 
 #Order of color according to the png
 <ORDER> 1 0
+
+<DISC> 3,5 16,6

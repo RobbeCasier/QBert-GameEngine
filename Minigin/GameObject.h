@@ -23,6 +23,12 @@ namespace dae
 			m_Components[m_Components.size() - 1]->Initialize();
 			return pComponent;
 		}
+		void AddComponent(std::shared_ptr<BaseComponent> component)
+		{
+			m_Components.push_back(component);
+			m_Components[m_Components.size() - 1]->SetGameObject(this);
+			m_Components[m_Components.size() - 1]->Initialize();
+		}
 
 		template<typename ComponentType>
 		std::shared_ptr<ComponentType> GetComponent() const
@@ -35,6 +41,12 @@ namespace dae
 			if (component != m_Components.end())
 				return std::dynamic_pointer_cast<ComponentType>(*component);
 			return nullptr;
+		}
+		
+		template<typename ComponentType>
+		void RemoveComponent(std::shared_ptr<ComponentType> comp)
+		{
+			std::remove(m_Components.begin(), m_Components.end(), comp);
 		}
 
 		void SetPosition(float x, float y);

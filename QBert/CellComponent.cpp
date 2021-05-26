@@ -4,18 +4,31 @@
 
 void CellComponent::SetCube(std::shared_ptr<PlayerComponent> player, std::shared_ptr<Grid> grid, SideColor color, std::vector<int> colorOrder, bool isSide)
 {
-	m_BlockComponent = m_GameObject->AddComponent<BlockComponent>();
+	auto block = m_GameObject->AddComponent<BlockComponent>();
 	m_isCube = true;
-	m_BlockComponent->SetIsSide(isSide);
-	m_BlockComponent->SetTexture(color, (int)m_Width, (int)m_Height);
-	m_BlockComponent->SetColorOrder(colorOrder);
+	block->SetIsSide(isSide);
+	block->SetTexture(color, (int)m_Width, (int)m_Height);
+	block->SetColorOrder(colorOrder);
 	glm::vec3 dst = m_TransformComponent->GetPosition();
-	dst.y -= m_Height/4;
+	dst.y -= m_Height/2;
 	dst.x -= m_Width / 2;
-	m_BlockComponent->SetTextureDestination(dst);
+	block->SetTextureDestination(dst);
 
-	m_BlockComponent->AddPlayerCommand(player);
-	m_BlockComponent->AddGridCommand(grid);
+	block->AddPlayerCommand(player);
+	block->AddPlayerCommandInter(player);
+	block->AddGridCommand(grid);
+	m_Component = block;
+}
+
+void CellComponent::SetDisc(SideColor color)
+{
+	auto disc = m_GameObject->AddComponent<Disc>();
+	m_isDisc = true;
+	disc->SetTexture(color, (int)m_Width, (int)m_Height);
+	glm::vec3 dst = m_TransformComponent->GetPosition();
+	disc->SetTextureDestination(dst);
+
+	m_Component = disc;
 }
 
 void CellComponent::SetPosition(const float& x, const float& y)
@@ -42,7 +55,7 @@ glm::vec2 CellComponent::GetSpritePos() const
 
 	//set to the position of the top left/right corner
 	pos.y -= m_Height / 2.f;
-	pos.x -= m_Height / 4.f;
+	pos.x -= m_Height/4.f;
 
 	return pos;
 }
@@ -56,9 +69,21 @@ bool CellComponent::IsCube() const
 	return m_isCube;
 }
 
-void CellComponent::ChangeColor()
+bool CellComponent::IsDisc() const
 {
-	if (m_BlockComponent == nullptr)
+	return m_isDisc;
+}
+
+void CellComponent::ChangeColor(bool reset)
+{
+	if (m_Component == nullptr)
 		return;
-	m_BlockComponent->ChangeColor();
+	std::dynamic_pointer_cast<BlockComponent>(m_Component)->ChangeColor(reset);
+}
+
+void CellComponent::RemoveDisc()
+{
+	m_isDisc = false;
+	m_GameObject->RemoveComponent(std::dynamic_pointer_cast<Disc>(m_Component));
+	m_Component.reset();
 }

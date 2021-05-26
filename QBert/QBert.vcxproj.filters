@@ -22,6 +22,27 @@
     <Filter Include="Header Files\Grid">
       <UniqueIdentifier>{6d54f8f0-f554-471f-96df-ee96cf8351b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Reader">
+      <UniqueIdentifier>{14d96dc6-6b46-434b-a9c4-f2435022e09f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Characters">
+      <UniqueIdentifier>{aaf6092b-2a59-41de-b5e7-ecbf94fb3d71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reader">
+      <UniqueIdentifier>{384ef310-76bf-4ac3-aad1-960be0c45b6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Characters">
+      <UniqueIdentifier>{dc57cb1c-110b-40e4-ac67-97c0c5d506c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{2ea2f37b-d396-4acb-9fdc-ccd9c95a947f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enemies">
+      <UniqueIdentifier>{858676b3-5771-466c-b58c-7b10603d8262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Enemies">
+      <UniqueIdentifier>{bc331f13-45f0-4c33-b41b-ddb84bc17897}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -30,14 +51,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainGame.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MainScene.cpp">
       <Filter>Source Files\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelScene.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Source Files\Grid</Filter>
@@ -48,13 +63,37 @@
     <ClCompile Include="BlockComponent.cpp">
       <Filter>Source Files\Grid</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameObservers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LevelReader.cpp">
+      <Filter>Source Files\Reader</Filter>
+    </ClCompile>
+    <ClCompile Include="MainGame.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Coily.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ugg_Wrongway.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Disc.cpp">
+      <Filter>Source Files\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="Slick_Sam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,14 +101,8 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MainScene.h">
       <Filter>Source Files\Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelScene.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Grid.h">
       <Filter>Header Files\Grid</Filter>
@@ -80,19 +113,52 @@
     <ClInclude Include="BlockComponent.h">
       <Filter>Header Files\Grid</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GameObservers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LevelReader.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Reader</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>Header Files\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelScene.h">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="GridController.h">
+      <Filter>Header Files\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Coily.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyController.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ugg_Wrongway.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Disc.h">
+      <Filter>Header Files\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="Slick_Sam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

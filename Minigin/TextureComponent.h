@@ -19,9 +19,13 @@ using namespace dae;
 		virtual void Update() override {};
 		void Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position);
 
-		void SetTexture(const std::string& filename, int width = 0, int height = 0);
+		void SetTexture(const std::string& filename);
 		void SetPosition(float x, float y);
 		void SetSource(const int& col, const int& row, const int& nrCol, const int& nrRows);
+		void SetSize(const int& width, const int& height);
+
+		int GetWidth();
+		int GetHeight();
 	private:
 		bool m_HasSourceRect;
 		SDL_Rect m_SrcRect;

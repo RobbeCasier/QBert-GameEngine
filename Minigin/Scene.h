@@ -5,10 +5,11 @@
 namespace dae
 {
 	class GameObject;
-	class Scene
+	class Scene : public std::enable_shared_from_this<Scene>
 	{
 	public:
 		void Add(const std::shared_ptr<GameObject>& object);
+		void Remove(std::shared_ptr<GameObject> object);
 
 		void RootInitialize();
 		void RootUpdate();

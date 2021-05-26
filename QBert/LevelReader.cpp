@@ -8,6 +8,7 @@
 void LevelReader::Read(std::string assetFile)
 {
 	m_Order.clear();
+	m_Discs.clear();
 	std::ifstream input;
 	input.open(assetFile, std::ios::in | std::ios::binary);
 	if (input.is_open())
@@ -33,6 +34,11 @@ std::vector<int> LevelReader::GetOrder() const
 	return m_Order;
 }
 
+std::vector<glm::vec2> LevelReader::GetDiscs() const
+{
+	return m_Discs;
+}
+
 void LevelReader::ReadLine(std::ifstream& input)
 {
 	std::string line;
@@ -42,7 +48,8 @@ void LevelReader::ReadLine(std::ifstream& input)
 		if (!ReadComment(input, line))
 			if (!ReadType(input, line))
 				if (!ReadColor(input, line))
-					ReadOrder(input, line);
+					if(!ReadOrder(input, line))
+						ReadDisc(input, line);
 
 }
 
@@ -94,6 +101,42 @@ bool LevelReader::ReadOrder(std::ifstream& input, std::string line)
 			sub = tempString.substr(offset, 1);
 			offset += 2;
 			m_Order.push_back(std::stoi(sub));
+		}
+		return true;
+	}
+	return false;
+}
+
+bool LevelReader::ReadDisc(std::ifstream& input, std::string line)
+{
+	std::string tempString = line;
+	std::regex regex = std::regex{ "(?:<DISC>)" };
+	int offset = 7;
+	int count = 0;
+	if (std::regex_search(tempString, regex))
+	{
+		while (offset < tempString.size())
+		{
+			std::string sub;
+			float x, y;
+			int pos = tempString.find_first_of(',', offset);
+			if (pos > tempString.length())
+				break;
+
+			count = pos - offset;
+			sub = tempString.substr(offset, count);
+			offset += count + 1;
+			x = std::stof(sub);
+
+			pos = tempString.find_first_of(' ', offset);
+			if (pos > tempString.length())
+				pos = tempString.length();
+
+			count = pos - offset;
+			sub = tempString.substr(offset, count);
+			y = std::stof(sub);
+			offset += count +1;
+			m_Discs.push_back(glm::vec2(x,y));
 		}
 		return true;
 	}
