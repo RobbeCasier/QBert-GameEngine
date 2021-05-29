@@ -63,10 +63,20 @@ void LevelScene::Initialize()
 
 	m_Grid->ConstructPiramid(m_Player, (SideColor)m_Reader.GetColor(), m_Reader.GetOrder());
 	m_Grid->ConstructDiscs((SideColor)m_Reader.GetColor(), m_Reader.GetDiscs());
-	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(m_Player));
-	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(m_Player));
-	input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(m_Player));
-	input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(m_Player));
+
+	//add a new controller to the 
+	input.AddController();
+	//controller input
+	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(m_Player), 0);
+	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(m_Player), 0);
+	input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(m_Player), 0);
+	input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(m_Player), 0);
+
+	//keyboard input
+	input.AddInput(KeyboardKeys::W, std::make_unique<JumpTopRight>(m_Player));
+	input.AddInput(KeyboardKeys::D, std::make_unique<JumpBottomRight>(m_Player));
+	input.AddInput(KeyboardKeys::S, std::make_unique<JumpBottomLeft>(m_Player));
+	input.AddInput(KeyboardKeys::A, std::make_unique<JumpTopLeft>(m_Player));
 
 	m_Spawner = std::make_shared<Spawner>(shared_from_this(), m_Grid, m_Player);
 	m_Spawner->Initialize();

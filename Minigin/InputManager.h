@@ -1,5 +1,6 @@
 #pragma once
 #include <XInput.h>
+#include <WinUser.h>
 #include "Singleton.h"
 #include "Commands.h"
 
@@ -24,19 +25,72 @@ namespace dae
 
 	};
 
+	enum class KeyboardKeys
+	{
+		W = SDL_SCANCODE_W,
+		S = SDL_SCANCODE_S,
+		A = SDL_SCANCODE_A,
+		D = SDL_SCANCODE_D,
+		Up = VK_UP,
+		Down = VK_DOWN,
+		Left = VK_LEFT,
+		Right = VK_RIGHT
+	};
+
+
 	using ControllerCommandsMap = std::map<unsigned int, std::unique_ptr<Command>>;
+
+	//controller
+	struct Controller
+	{
+		Controller(const unsigned int& playerNumber): number{playerNumber}{}
+
+		void UpdateState()
+		{
+			ZeroMemory(&currentState, sizeof(XINPUT_STATE));
+			XInputGetState(number, &currentState);
+		}
+		bool IsConnected()
+		{
+			XINPUT_STATE state;
+			ZeroMemory(&state, sizeof(XINPUT_STATE));
+			DWORD result = XInputGetState(number, &state);
+
+			if (result == ERROR_SUCCESS)
+				return true;
+			return false;
+		}
+		bool IsPressed(unsigned int inputKey)
+		{
+			if (inputKey == currentState.Gamepad.wButtons
+				&& previousState.Gamepad.wButtons != currentState.Gamepad.wButtons)
+				return true;
+			return false;
+		}
+
+		ControllerCommandsMap controllerCommandMap;
+		XINPUT_STATE previousState;
+		XINPUT_STATE currentState;
+		unsigned int number;
+	};
 
 	class InputManager final : public Singleton<InputManager>
 	{
 	public:
-		void AddInput(ControllerButton button, std::unique_ptr<Command> command);
+		InputManager();
+		void AddController();
+		void AddInput(ControllerButton button, std::unique_ptr<Command> command, const unsigned int& player);
+		void AddInput(KeyboardKeys key, std::unique_ptr<Command> command);
 		bool ProcessInput();
-		bool IsPressed(unsigned int inputKey) const;
 		void HandleInput();
 	private:
-		ControllerCommandsMap m_ConsoleCommands{};
-		XINPUT_STATE m_CurrentState{};
-		XINPUT_STATE m_PreviousState{};
+		bool IsPressed(unsigned int inputKey) const;
+
+		std::vector<Controller*> m_Controllers;
+		ControllerCommandsMap m_KeyboardCommands{};
+
+		const Uint8* m_CurrentKeyboardState = nullptr;
+		Uint8 m_PreviousKeyboardState[SDL_NUM_SCANCODES]{ 0 };
 	};
 
 }

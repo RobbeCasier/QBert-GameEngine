@@ -286,7 +286,7 @@ Shape::Rect Player::GetRect()
 	Shape::Rect rect;
 	rect.x = transform->GetPosition().x;
 	rect.y = transform->GetPosition().y;
-	rect.w = m_CharacterWith;
+	rect.w = (float)m_CharacterWith;
 	rect.h = m_CharacterHeight;
 	return rect;
 }

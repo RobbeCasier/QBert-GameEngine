@@ -119,7 +119,7 @@ bool LevelReader::ReadDisc(std::ifstream& input, std::string line)
 		{
 			std::string sub;
 			float x, y;
-			int pos = tempString.find_first_of(',', offset);
+			int pos = tempString.find_first_of(',', (size_t)offset);
 			if (pos > tempString.length())
 				break;
 
@@ -128,7 +128,7 @@ bool LevelReader::ReadDisc(std::ifstream& input, std::string line)
 			offset += count + 1;
 			x = std::stof(sub);
 
-			pos = tempString.find_first_of(' ', offset);
+			pos = tempString.find_first_of(' ', (size_t)offset);
 			if (pos > tempString.length())
 				pos = tempString.length();
 

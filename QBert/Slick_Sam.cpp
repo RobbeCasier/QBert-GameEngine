@@ -202,12 +202,12 @@ void Slick_Sam::UpdateDescend()
 void Slick_Sam::CheckCollision()
 {
 	auto playerRect = m_pPlayer->GetRect();
-	Shape::Rect rect;
+	Shape::Rect rect{};
 	auto transform = m_GameObject->GetComponent<Transform>();
 	rect.x = transform->GetPosition().x;
 	rect.y = transform->GetPosition().y;
-	//make it a square, so the player only has to worry about the landing
-	rect.h = rect.w = m_CharacterWidth;
+
+	rect.h = rect.w = (float)m_CharacterWidth;
 	if (Utility::IsOverlappingRectangle(rect, playerRect))
 	{
 		m_cmdCatch->Execute();

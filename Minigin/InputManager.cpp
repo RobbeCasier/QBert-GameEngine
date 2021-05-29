@@ -2,16 +2,49 @@
 #include "InputManager.h"
 #include "SDL.h"
 
-void dae::InputManager::AddInput( ControllerButton inputKey, std::unique_ptr<Command> command)
+dae::InputManager::InputManager()
 {
-	m_ConsoleCommands.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)inputKey, std::move(command)));
+	//initialize
+	//assign pointer
+	m_CurrentKeyboardState = SDL_GetKeyboardState(NULL);
+}
+
+void dae::InputManager::AddController()
+{
+	m_Controllers.push_back(new Controller((unsigned int)m_Controllers.size()));
+}
+
+void dae::InputManager::AddInput( ControllerButton inputKey, std::unique_ptr<Command> command, const unsigned int& player)
+{
+	UNREFERENCED_PARAMETER(inputKey);
+	UNREFERENCED_PARAMETER(player);
+	if (m_Controllers.size() > player)
+		m_Controllers[player]->controllerCommandMap.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)inputKey, std::move(command)));
+}
+
+void dae::InputManager::AddInput(KeyboardKeys key, std::unique_ptr<Command> command)
+{
+	m_KeyboardCommands.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)key, std::move(command)));
 }
 
 bool dae::InputManager::ProcessInput()
 {
-	m_PreviousState = m_CurrentState;
-	ZeroMemory(&m_CurrentState, sizeof(XINPUT_STATE));
-	XInputGetState(0, &m_CurrentState);
+	//update states
+	//controller
+	for (auto& controller : m_Controllers)
+	{
+		if (controller->IsConnected())
+		{
+			controller->previousState = controller->currentState;
+			controller->UpdateState();
+			continue;
+		}
+		std::cout << "No Controller detected" << std::endl;
+	}
+
+	//keyboard
+	memcpy(m_PreviousKeyboardState, m_CurrentKeyboardState, SDL_NUM_SCANCODES);
+	m_CurrentKeyboardState = SDL_GetKeyboardState(NULL);
 
 	SDL_Event e;
 	while (SDL_PollEvent(&e)) {
@@ -31,15 +64,27 @@ bool dae::InputManager::ProcessInput()
 
 bool dae::InputManager::IsPressed(unsigned int inputKey) const
 {
-	if (inputKey == m_CurrentState.Gamepad.wButtons
-		&& m_PreviousState.Gamepad.wButtons != m_CurrentState.Gamepad.wButtons)
+	if (m_CurrentKeyboardState[inputKey]
+		&& m_PreviousKeyboardState[inputKey] != m_CurrentKeyboardState[inputKey])
 		return true;
 	return false;
 }
 
 void dae::InputManager::HandleInput()
 {
-	for (auto& element : m_ConsoleCommands)
+	for (auto& controller : m_Controllers)
+	{
+		for (auto& element : controller->controllerCommandMap)
+		{
+			if (controller->IsPressed(element.first))
+			{
+				element.second->Execute();
+				continue;
+			}
+		}
+	}
+
+	for (auto& element : m_KeyboardCommands)
 	{
 		if (IsPressed(element.first))
 		{

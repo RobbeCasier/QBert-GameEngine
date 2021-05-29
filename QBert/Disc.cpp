@@ -70,7 +70,7 @@ void Disc::SetTextureDestination(glm::vec3 dst)
 {
 	m_TextureRect.x = dst.x;
 	m_TextureRect.y = dst.y;
-	m_TextureRect.w = m_SizeX;
-	m_TextureRect.h = m_SizeY;
+	m_TextureRect.w = (int)m_SizeX;
+	m_TextureRect.h = (int)m_SizeY;
 	m_TextureComponent->SetPosition(m_TextureRect.x - m_SizeX/2, m_TextureRect.y - m_SizeY/2);
 }
