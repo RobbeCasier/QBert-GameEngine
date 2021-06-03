@@ -26,6 +26,7 @@ namespace dae
 		void Play() { m_GameState = GameState::PLAY; }
 		void Win() { m_GameState = GameState::WIN; }
 		void Collide() { m_GameState = GameState::COLLISION; }
+		void GreenBallMode() { m_GameState = GameState::GREENBALL; }
 	private:
 		friend class Singleton<GameContext>;
 		GameContext() = default;

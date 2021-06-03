@@ -6,11 +6,6 @@
 
 int Ugg_Wrongway::m_CurrentId = 0;
 
-Ugg_Wrongway::~Ugg_Wrongway()
-{
-	--m_CurrentId;
-}
-
 void Ugg_Wrongway::Initialize()
 {
 	//give an id
@@ -38,6 +33,10 @@ void Ugg_Wrongway::Initialize()
 
 void Ugg_Wrongway::Update()
 {
+	//don't update when not in play state
+	if (GameContext::GetInstance().GetGameState() != GameState::PLAY)
+		return;
+
 	switch (m_State)
 	{
 	case UWState::idle:
@@ -58,10 +57,13 @@ void Ugg_Wrongway::Update()
 	CheckCollision();
 }
 
-void Ugg_Wrongway::SetPlayer(std::shared_ptr<Player> player)
+void Ugg_Wrongway::SetPlayers(const std::vector<std::shared_ptr<Player>>& players)
 {
-	m_pPlayer = player;
-	m_cmdPlayerDeath = std::make_shared<Death>(m_pPlayer);
+	m_Players= players;
+	for (auto player : m_Players)
+	{
+		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
+	}
 }
 
 void Ugg_Wrongway::SetStartLocation(const int& col, const int& row)
@@ -192,16 +194,19 @@ void Ugg_Wrongway::UpdateDescend()
 
 void Ugg_Wrongway::CheckCollision()
 {
-	auto playerRect = m_pPlayer->GetRect();
-	Shape::Rect rect;
-	auto transform = m_GameObject->GetComponent<Transform>();
-	rect.x = transform->GetPosition().x;
-	rect.y = transform->GetPosition().y;
-	//make it a square, so the player only has to worry about the landing
-	rect.h = rect.w = (float)m_CharacterWidth;
-	if (Utility::IsOverlappingRectangle(rect, playerRect))
+	for (int i = 0; i < m_Players.size(); ++i)
 	{
-		m_cmdPlayerDeath->Execute();
+		auto playerRect = m_Players[i]->GetRect();
+		Shape::Rect rect;
+		auto transform = m_GameObject->GetComponent<Transform>();
+		rect.x = transform->GetPosition().x;
+		rect.y = transform->GetPosition().y;
+		//make it a square, so the player only has to worry about the landing
+		rect.h = rect.w = (float)m_CharacterWidth;
+		if (Utility::IsOverlappingRectangle(rect, playerRect))
+		{
+			m_cmdPlayerDeaths[i]->Execute();
+		}
 	}
 }
 

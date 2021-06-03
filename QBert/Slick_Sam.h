@@ -28,12 +28,12 @@ class Slick_Sam :
 {
 public:
     explicit Slick_Sam() = default;
-    virtual ~Slick_Sam();
+    virtual ~Slick_Sam() = default;
 
     virtual void Initialize() override;
     virtual void Update() override;
 
-    void SetPlayer(std::shared_ptr<Player> player);
+    void SetPlayers(const std::vector<std::shared_ptr<Player>>& playesr);
     void SetGrid(std::shared_ptr<Grid> grid) { m_pGrid = grid; }
     void SetStartLocation(const int& col, const int& row);
 
@@ -58,14 +58,14 @@ private:
 
     ////Pointers
     std::shared_ptr<TextureComponent> m_pTextureComponent = nullptr;
-    std::shared_ptr<Player> m_pPlayer = nullptr;
+    std::vector<std::shared_ptr<Player>> m_Players;
     std::shared_ptr<Grid> m_pGrid = nullptr;
 
     std::unique_ptr<Subject> m_ActorChanged = nullptr;
 
     ////Texture variables
-    const unsigned int m_CharacterWidth = 32.f;
-    const unsigned int m_CharacterHeight = 32.f;
+    const unsigned int m_CharacterWidth = 32;
+    const unsigned int m_CharacterHeight = 32;
 
     //starter column depending on character
     const unsigned int m_LeftStart = 0;
@@ -115,6 +115,6 @@ private:
     SSState m_State = SSState::descend;
 
     ////Commands
-    std::shared_ptr<Command> m_cmdCatch;
+    std::vector<std::shared_ptr<Command>> m_cmdCatchs;
 };
 

@@ -26,7 +26,9 @@ private:
     LevelReader m_Reader;
 
     float m_WinTime = 2.5f;
+    float m_FreezeTime = 10.f;
     float m_Timer = 0.f;
+    float m_FreezeTimer = 0.f;
 
     bool m_IsCoop = false;
     bool m_IsMultiplayer = false;

@@ -63,6 +63,10 @@ void EnemyDeath::OnNotify(std::shared_ptr<BaseComponent> enemy, const std::strin
 	{
 		m_Spawner->KillRB(enemy);
 	}
+	else if (event == "KILL_GB")
+	{
+		m_Spawner->KillGB();
+	}
 }
 
 void PlayerDeath::OnNotify(std::shared_ptr<BaseComponent> player, const std::string& event)

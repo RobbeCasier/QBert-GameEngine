@@ -147,12 +147,25 @@ void LevelScene::Update()
 {
 	if (m_Grid != nullptr)
 	{
-		if (GameContext::GetInstance().GetGameState() == GameState::WIN)
+		if (GameContext::GetInstance().GetGameState() == GameState::GREENBALL)
+		{
+			m_FreezeTimer += Time::GetInstance().GetElapsedTime();
+			if (m_FreezeTimer >= m_FreezeTime)
+			{
+				m_FreezeTimer = 0.f;
+				GameContext::GetInstance().Play();
+			}
+			else
+				return;
+		}
+		else if (GameContext::GetInstance().GetGameState() == GameState::WIN)
 		{
 			m_Timer += Time::GetInstance().GetElapsedTime();
 			if (m_Timer >= m_WinTime)
 			{
 				m_Timer = 0.f;
+				//you can win in freeze mode -> reset time
+				m_FreezeTimer = 0.f;
 				GameContext::GetInstance().Play();
 			}
 			else

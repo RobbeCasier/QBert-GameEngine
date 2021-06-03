@@ -99,6 +99,9 @@
     <ClCompile Include="RedBall.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="GreenBall.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -165,6 +168,9 @@
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="RedBall.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="GreenBall.h">
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

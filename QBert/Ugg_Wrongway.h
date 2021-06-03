@@ -35,12 +35,12 @@ class Ugg_Wrongway :
 {
 public:
     explicit Ugg_Wrongway(Type type) : m_Type(type) {};
-    virtual ~Ugg_Wrongway();
+    virtual ~Ugg_Wrongway() = default;
 
     virtual void Initialize() override;
     virtual void Update() override;
 
-    void SetPlayer(std::shared_ptr<Player> player);
+    void SetPlayers(const std::vector<std::shared_ptr<Player>>& player);
     void SetGrid(std::shared_ptr<Grid> grid) { m_pGrid = grid; }
     void SetStartLocation(const int& col, const int& row);
 
@@ -64,14 +64,14 @@ private:
 
     ////Pointers
     std::shared_ptr<TextureComponent> m_pTextureComponent = nullptr;
-    std::shared_ptr<Player> m_pPlayer = nullptr;
+    std::vector<std::shared_ptr<Player>> m_Players;
     std::shared_ptr<Grid> m_pGrid = nullptr;
 
     std::unique_ptr<Subject> m_ActorChanged = nullptr;
 
     ////Texture variables
-    const unsigned int m_CharacterWidth = 32.f;
-    const unsigned int m_CharacterHeight = 32.f;
+    const unsigned int m_CharacterWidth = 32;
+    const unsigned int m_CharacterHeight = 32;
 
     //starter column depending on character
     const unsigned int m_UggSideStart = 4;
@@ -123,9 +123,9 @@ private:
     UWState m_State = UWState::descend;
 
     ////Commands
-    std::shared_ptr<Command> m_cmdPlayerDeath;
+    std::vector<std::shared_ptr<Command>> m_cmdPlayerDeaths;
 
     static int m_CurrentId;
-    int m_ID;
+    int m_ID = 0;
 };
 
