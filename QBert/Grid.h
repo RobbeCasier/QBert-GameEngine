@@ -22,7 +22,7 @@ public:
 
 	void SetTopPiramid(const unsigned short& col, const unsigned short& row);
 
-	void ConstructPiramid(std::shared_ptr<Player> player, SideColor color, std::vector<int> colorOrder);
+	void ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players, SideColor color, std::vector<int> colorOrder);
 	void ConstructDiscs(SideColor color, std::vector<glm::vec2> pos);
 	void NewPiramid(GameType type, SideColor color, std::vector<int> colorOrder);
 	void NewDiscs(SideColor color, std::vector<glm::vec2> positions);
@@ -57,13 +57,10 @@ private:
 	std::vector<unsigned int> m_DiscCells;
 	std::unique_ptr<Subject> m_ActorChanged;
 
-	std::shared_ptr<Player> m_pPlayer;
+	std::vector<std::shared_ptr<Player>> m_Players;
 
 	//commands
-	std::unique_ptr<Command> m_cmdFallPlayer;
-	std::unique_ptr<Command> m_cmdBeatCoily;
-	std::unique_ptr<Command> m_cmdRemainingDisc;
-	std::unique_ptr<Command> m_cmdLift;
+	std::vector<std::map<std::string, std::shared_ptr<Command>>> m_Commands;
 
 	Graph* m_pGraph = nullptr;
 };

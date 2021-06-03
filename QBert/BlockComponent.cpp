@@ -10,21 +10,6 @@ void BlockComponent::Initialize()
 	m_TextureComponent = m_GameObject->AddComponent<TextureComponent>();
 }
 
-void BlockComponent::AddPlayerCommand(std::shared_ptr<PlayerComponent> player)
-{
-	m_BlockChangePlayerFinal = std::make_unique<ChangeColorPlayerFinal>(player);
-}
-
-void BlockComponent::AddPlayerCommandInter(std::shared_ptr<PlayerComponent> player)
-{
-	m_BlockChangePlayerInter = std::make_unique<ChangeColorPlayerIntermediat>(player);
-}
-
-void BlockComponent::AddGridCommand(std::shared_ptr<Grid> grid)
-{
-	m_BlockChangeGrid = std::make_unique<ChangeColorGrid>(grid);
-}
-
 void BlockComponent::SetGameType(GameType type)
 {
 	m_Type = type;
@@ -96,7 +81,7 @@ void BlockComponent::SetTextureDestination(glm::vec3 dst)
 	m_TextureComponent->SetPosition(m_TextureDst.x, m_TextureDst.y);
 }
 
-void BlockComponent::ChangeColor(bool reset)
+ColorState BlockComponent::ChangeColor(bool reset)
 {
 	if (reset)
 	{
@@ -106,7 +91,7 @@ void BlockComponent::ChangeColor(bool reset)
 			col = 1;
 		row = m_ColorOrder[m_CurrentColor];
 		m_TextureComponent->SetSource(col, row, 2, 6);
-		return;
+		return ColorState::START;
 	}
 	//change the bool, so no extra points are given in the repeat mode
 	if (m_CurrentColor == m_ColorOrder.size() - 1)
@@ -117,21 +102,23 @@ void BlockComponent::ChangeColor(bool reset)
 	{
 		++m_CurrentColor;
 		m_CurrentColor = m_CurrentColor % m_ColorOrder.size();
+		ColorState newColorState = ColorState::START;
 		//don't add score when you are in the repeat
 		if (!m_HasReachedFinalColorOnce && m_CurrentColor != m_ColorOrder.size() - 1)
 		{
-			m_BlockChangePlayerInter->Execute();
+			newColorState = ColorState::INTERMEDIAT;
 		}
 		else if (!m_HasReachedFinalColorOnce && m_CurrentColor == m_ColorOrder.size() - 1)
 		{
-			m_BlockChangePlayerFinal->Execute();
+			newColorState = ColorState::FINAL;
 		}
-		m_BlockChangeGrid->Execute();
+
 		int col = 0, row = 0;
 		if (!m_isSide)
 			col = 1;
 		row = m_ColorOrder[m_CurrentColor];
 		m_TextureComponent->SetSource(col, row, 2, 6);
+		return newColorState;
 	}
 }
 

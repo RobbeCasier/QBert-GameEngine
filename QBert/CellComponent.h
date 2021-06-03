@@ -12,7 +12,7 @@ public:
 	explicit CellComponent() = default;
 	virtual ~CellComponent() = default;
 
-	void SetCube(std::shared_ptr<PlayerComponent> player, std::shared_ptr<Grid> grid, SideColor color, std::vector<int> colorOrder, bool isSide = false);
+	void SetCube(SideColor color, std::vector<int> colorOrder, bool isSide = false);
 	void SetDisc(SideColor color);
 	void SetPosition(const float& x, const float& y);
 	void SetSize(const float& size);
@@ -24,7 +24,7 @@ public:
 
 	bool IsCube() const;
 	bool IsDisc() const;
-	void ChangeColor(bool reset = false);
+	ColorState ChangeColor(bool reset = false);
 	void RemoveDisc();
 	std::shared_ptr<BlockComponent> GetBlock() const { return std::dynamic_pointer_cast<BlockComponent>(m_Component); }
 private:

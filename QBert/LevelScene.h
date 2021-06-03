@@ -16,11 +16,19 @@ public:
     void Initialize() override;
     void Update() override;
     void Render(SDL_Window * window) const override;
+
+    void SetCoop() { m_IsCoop = true; }
+    void SetMultiplayer() { m_IsMultiplayer = true; }
 private:
     std::shared_ptr<Grid> m_Grid;
-    std::shared_ptr<Player> m_Player;
-    std::shared_ptr<Coily> m_Coily;
+    std::vector<std::shared_ptr<Player>> m_Players;
     std::shared_ptr<Spawner> m_Spawner;
     LevelReader m_Reader;
+
+    float m_WinTime = 2.5f;
+    float m_Timer = 0.f;
+
+    bool m_IsCoop = false;
+    bool m_IsMultiplayer = false;
 };
 

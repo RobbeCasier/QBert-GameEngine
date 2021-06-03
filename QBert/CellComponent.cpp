@@ -2,7 +2,7 @@
 #include "CellComponent.h"
 #include <GameObject.h>
 
-void CellComponent::SetCube(std::shared_ptr<PlayerComponent> player, std::shared_ptr<Grid> grid, SideColor color, std::vector<int> colorOrder, bool isSide)
+void CellComponent::SetCube(SideColor color, std::vector<int> colorOrder, bool isSide)
 {
 	auto block = m_GameObject->AddComponent<BlockComponent>();
 	m_isCube = true;
@@ -14,9 +14,6 @@ void CellComponent::SetCube(std::shared_ptr<PlayerComponent> player, std::shared
 	dst.x -= m_Width / 2;
 	block->SetTextureDestination(dst);
 
-	block->AddPlayerCommand(player);
-	block->AddPlayerCommandInter(player);
-	block->AddGridCommand(grid);
 	m_Component = block;
 }
 
@@ -74,11 +71,11 @@ bool CellComponent::IsDisc() const
 	return m_isDisc;
 }
 
-void CellComponent::ChangeColor(bool reset)
+ColorState CellComponent::ChangeColor(bool reset)
 {
 	if (m_Component == nullptr)
-		return;
-	std::dynamic_pointer_cast<BlockComponent>(m_Component)->ChangeColor(reset);
+		return ColorState::START;
+	return std::dynamic_pointer_cast<BlockComponent>(m_Component)->ChangeColor(reset);
 }
 
 void CellComponent::RemoveDisc()

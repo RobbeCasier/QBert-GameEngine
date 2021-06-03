@@ -35,12 +35,15 @@ public:
     int GetIndex() const;
     Shape::Rect GetRect();
 
+    void Reset();
+
 protected:
     virtual void StopFall();
     virtual void StopDescend();
     void UpdateJump();
     void UpdateFall();
     void UpdateDescend();
+    void UpdateCollision();
     virtual void ChangeLookDirection(const int& horDir = 0, const int& verDir = 0);
     std::shared_ptr<TextureComponent> m_TextureComponent;
     const unsigned int m_CharacterWith{ 32 };
@@ -79,6 +82,10 @@ private:
 
     glm::vec2 m_JumpDirection;
     glm::vec2 m_LiftDirection;
+
+    float m_TimeClearEnemies = 2.f;
+    float m_TimeRestart = 2.5f;
+    float m_Timer = 0.f;
 
     bool m_IsPlayer = false;
 

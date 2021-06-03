@@ -79,34 +79,53 @@ inline int IsNotVisited(int x, std::vector<int>& path)
 	return 1;
 }
 
-void Graph::FindPath(const int& start, const int& end)
+void Graph::FindPath(const int& start, const std::vector<int>& end)
 {
-	std::queue<std::vector<int>> openList;
-	std::vector<int> closedList;
-	closedList.push_back(start);
-	openList.push(closedList);
-
-	int currentNode;
-	while (!openList.empty())
+	std::vector<std::vector<int>> results;
+	for (int i = 0; i < end.size(); ++i)
 	{
-		closedList = openList.front();
-		openList.pop();
+		std::queue<std::vector<int>> openList;
+		std::vector<int> closedList;
+		closedList.push_back(start);
+		openList.push(closedList);
 
-		currentNode = closedList[closedList.size() - 1];
-
-		if (currentNode == end)
+		int currentNode;
+		while (!openList.empty())
 		{
-			m_Result = closedList;
-			break;
-		}
+			closedList = openList.front();
+			openList.pop();
 
-		for (int i = 0; i < m_Graph[currentNode].size(); i++)
-		{
-			if (IsNotVisited(m_Graph[currentNode][i], closedList))
+			currentNode = closedList[closedList.size() - 1];
+
+			if (currentNode == end[i])
 			{
-				std::vector<int> newPath(closedList);
-				newPath.push_back(m_Graph[currentNode][i]);
-				openList.push(newPath);
+				results.push_back(closedList);
+				break;
+			}
+
+			for (int i = 0; i < m_Graph[currentNode].size(); i++)
+			{
+				if (IsNotVisited(m_Graph[currentNode][i], closedList))
+				{
+					std::vector<int> newPath(closedList);
+					newPath.push_back(m_Graph[currentNode][i]);
+					openList.push(newPath);
+				}
+			}
+		}
+	}
+	m_RouteIndex = 0;
+	m_Result = results[0];
+
+	//if multiple players look for closest
+	if (results.size() > 1)
+	{
+		for (int i = 0; i < results.size(); ++i)
+		{
+			if (results[i].size() < m_Result.size())
+			{
+				m_RouteIndex = i;
+				m_Result = results[i];
 			}
 		}
 	}

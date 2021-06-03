@@ -32,3 +32,13 @@ public:
 		std::dynamic_pointer_cast<Slick_Sam>(m_Actor)->Fall();
 	}
 };
+
+class RedBallFall final : public Command
+{
+public:
+	explicit RedBallFall(std::shared_ptr<BaseComponent> rb) : Command(rb) {}
+	void Execute() override
+	{
+		std::dynamic_pointer_cast<RedBall>(m_Actor)->Fall();
+	}
+};

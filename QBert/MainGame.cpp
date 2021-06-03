@@ -12,6 +12,7 @@
 void MainGame::LoadGame() const
 {
 	dae::SceneManager::GetInstance().AddScene(new MainScene("MainScreen"));
+	dae::SceneManager::GetInstance().SetActive("MainScreen");
 	//load in sounds
 	ServiceLocator::RegisterSoundSystem(std::make_shared<SDL_Sound_System>(SDL_Sound_System()));
 	auto& audio = ServiceLocator::GetSoundSystem();

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameObservers.h"
+#include <GameContext.h>
 #include "Player.h"
 #include <ServiceLocator.h>
 #include "Grid.h"
@@ -18,7 +19,6 @@ void ScoreDisplay::OnNotify(std::shared_ptr<BaseComponent> actor, const std::str
 {
 	if (event == "SCORE_ADDED")
 	{
-		std::cout << "SCORE_ADDED" << std::endl;
 		m_UI->SetText(std::to_string(std::dynamic_pointer_cast<Player>(actor)->GetScore()));
 		ServiceLocator::GetSoundSystem().Play(1, 100);
 	}
@@ -28,7 +28,7 @@ void LevelDisplay::OnNotify(std::shared_ptr<BaseComponent> actor, const std::str
 {
 	if (event == "NEW_LEVEL")
 	{
-		std::cout << "NEW LEVEL" << std::endl;
+		GameContext::GetInstance().Win();
 		m_UI->SetText("LEVEL: " + std::to_string(std::dynamic_pointer_cast<Grid>(actor)->GetCurrentLevel()));
 		ServiceLocator::GetSoundSystem().Play(5, 100);
 	}
@@ -38,7 +38,8 @@ void RoundsDisplay::OnNotify(std::shared_ptr<BaseComponent> actor, const std::st
 {
 	if (event == "NEW_ROUND")
 	{
-		std::cout << "NEW ROUND" << std::endl;
+		GameContext::GetInstance().Win();
+
 		m_UI->SetText("ROUND: " + std::to_string(std::dynamic_pointer_cast<Grid>(actor)->GetCurrentRound()));
 		ServiceLocator::GetSoundSystem().Play(5, 100);
 	}
@@ -57,6 +58,10 @@ void EnemyDeath::OnNotify(std::shared_ptr<BaseComponent> enemy, const std::strin
 	else if (event == "KILL_SS")
 	{
 		m_Spawner->KillSS(enemy);
+	}
+	else if (event == "KILL_RB")
+	{
+		m_Spawner->KillRB(enemy);
 	}
 }
 

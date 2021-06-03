@@ -16,6 +16,16 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	//don't update when in win state
+	if (GameContext::GetInstance().GetGameState() == GameState::WIN)
+		return;
+
+	if (GameContext::GetInstance().GetGameState() == GameState::COLLISION)
+	{
+		UpdateCollision();
+		return;
+	}
+
 	if (m_State == CharacterState::jumping)
 		UpdateJump();
 	else if (m_State == CharacterState::fall)
@@ -28,9 +38,9 @@ void Player::Update()
 
 void Player::StopFall()
 {
-	m_LiftLocation = m_Grid->GetPos(9, 3);
 	m_CurrentCol = m_StartCol;
 	m_CurrentRow = m_StartRow;
+	m_LiftLocation = m_Grid->GetPos(m_CurrentCol, m_CurrentRow);
 	--m_CurrentSpriteCol;
 	ChangeLookDirection();
 	m_CurrentFallSpeed = 0.f;
@@ -156,6 +166,24 @@ void Player::UpdateDescend()
 		transformComp->SetPosition(curPos2.x, curPos2.y, 0.f);
 }
 
+void Player::UpdateCollision()
+{
+	m_Timer += Time::GetInstance().GetElapsedTime();
+	if (m_Timer >= m_TimeClearEnemies)
+	{
+		m_ActorChanged->Notify(shared_from_this(), "CLEAR_ENEMIES");
+	}
+	if (m_Timer >= m_TimeRestart)
+	{
+		SetStartLocation(m_StartCol, m_StartRow);
+		m_Timer = 0.f;
+		GameContext::GetInstance().Play();
+		--m_CurrentSpriteCol;
+		ChangeLookDirection();
+		m_State = CharacterState::idle;
+	}
+}
+
 void Player::SetGrid(std::shared_ptr<Grid> grid)
 {
 	m_Grid = grid;
@@ -187,19 +215,8 @@ void Player::DecreaseHealth()
 	if (m_Health > 0)
 	{
 		--m_Health;
-
-		//reset to top
-		m_LiftLocation = m_Grid->GetPos(9, 3);
-		m_CurrentCol = m_StartCol;
-		m_CurrentRow = m_StartRow;
-		if (m_State != CharacterState::idle && m_State != CharacterState::elevate)
-			--m_CurrentSpriteCol;
-		m_LiftLocation.y -= m_CharacterHeight / 2;
-		this->SetPosition({ m_LiftLocation, 0.f });
-		m_State = CharacterState::idle;
 	}
 	m_ActorChanged->Notify(shared_from_this(), "IS_DEAD");
-	m_ActorChanged->Notify(shared_from_this(), "CLEAR_ENEMIES");
 }
 
 void Player::Fall()
@@ -289,4 +306,9 @@ Shape::Rect Player::GetRect()
 	rect.w = (float)m_CharacterWith;
 	rect.h = m_CharacterHeight;
 	return rect;
+}
+
+void Player::Reset()
+{
+	SetStartLocation(m_StartCol, m_StartRow);
 }

@@ -2,6 +2,7 @@
 #include "Coily.h"
 #include "Grid.h"
 #include <GameTime.h>
+#include <GameContext.h>
 
 void Coily::Initialize()
 {
@@ -14,6 +15,10 @@ void Coily::Initialize()
 
 void Coily::Update()
 {
+	//don't update when in win state
+	if (GameContext::GetInstance().GetGameState() != GameState::PLAY)
+		return;
+
 	Player::Update();
 
 	if (m_State == CharacterState::idle)
@@ -45,8 +50,11 @@ void Coily::Update()
 					m_pGraph = m_Grid->GetGraph();
 
 				int currentIndex = GetIndex();
-				int endIndex = m_pPlayer->GetIndex();
-				m_pGraph->FindPath(currentIndex, endIndex);
+				std::vector<int> endIndices;
+				for (auto player : m_Players)
+					endIndices.push_back(player->GetIndex());
+
+				m_pGraph->FindPath(currentIndex, endIndices);
 				int nextNode = m_pGraph->GetNextNode();
 				glm::vec2 columnRow = m_Grid->GetColumnRow(nextNode);
 
@@ -63,10 +71,18 @@ void Coily::Update()
 	CheckCollision();
 }
 
-void Coily::AddPlayer(std::shared_ptr<Player> pPlayer)
+void Coily::AddPlayers(std::vector<std::shared_ptr<Player>> players)
 {
-	m_pPlayer = pPlayer;
-	m_cmdPlayerDeath = std::make_shared<Death>(m_pPlayer);
+	m_Players = players;
+	for (auto player : m_Players)
+	{
+		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
+	}
+}
+
+const int& Coily::GetPlayer()
+{
+	return m_pGraph->GetRouteIndex();
 }
 
 void Coily::StopFall()
@@ -108,15 +124,20 @@ void Coily::GetRandomJumpLocation()
 
 void Coily::CheckCollision()
 {
-	auto playerRect = m_pPlayer->GetRect();
-	Shape::Rect rect;
-	auto transform = m_GameObject->GetComponent<Transform>();
-	rect.x = transform->GetPosition().x;
-	rect.y = transform->GetPosition().y;
-	//make it a square, so the player only has to worry about the landing
-	rect.h = rect.w = (float)m_CharacterWith;
-	if (Utility::IsOverlappingRectangle(rect, playerRect))
+	for (int i = 0; i < m_Players.size(); ++i)
 	{
-		m_cmdPlayerDeath->Execute();
+		auto playerRect = m_Players[i]->GetRect();
+		playerRect /= 2.0f;
+		Shape::Rect rect;
+		auto transform = m_GameObject->GetComponent<Transform>();
+		rect.h = rect.w = (float)m_CharacterWith;
+		rect.x = transform->GetPosition().x;
+		rect.y = transform->GetPosition().y;
+		rect /= 2.0f;
+		//make it a square, so the player only has to worry about the landing
+		if (Utility::IsOverlappingRectangle(rect, playerRect))
+		{
+			m_cmdPlayerDeaths[i]->Execute();
+		}
 	}
 }

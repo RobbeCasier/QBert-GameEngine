@@ -94,7 +94,10 @@
       <Filter>Source Files\Grid</Filter>
     </ClCompile>
     <ClCompile Include="Slick_Sam.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="RedBall.cpp">
+      <Filter>Source Files\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +162,10 @@
       <Filter>Header Files\Grid</Filter>
     </ClInclude>
     <ClInclude Include="Slick_Sam.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="RedBall.h">
+      <Filter>Header Files\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

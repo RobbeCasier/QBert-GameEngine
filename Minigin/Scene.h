@@ -9,7 +9,8 @@ namespace dae
 	{
 	public:
 		void Add(const std::shared_ptr<GameObject>& object);
-		void Remove(std::shared_ptr<GameObject> object);
+		void RemoveObject(std::shared_ptr<GameObject> object);
+		const std::string& GetSceneName() { return m_Name; }
 
 		void RootInitialize();
 		void RootUpdate();
@@ -28,9 +29,10 @@ namespace dae
 		virtual void Render(SDL_Window* window) const = 0;
 
 	private: 
-
+		void Remove();
 		std::string m_Name;
-		std::vector < std::shared_ptr<GameObject>> m_Objects{};
+		std::vector<std::shared_ptr<GameObject>> m_Objects{};
+		std::vector<std::shared_ptr<GameObject>> m_ObjectsToDelete{};
 
 		static unsigned int m_IdCounter; 
 	};

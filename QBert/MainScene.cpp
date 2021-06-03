@@ -59,10 +59,25 @@ void MainScene::Render(SDL_Window* window) const
 	ImGui::SetWindowPos({ float(x / 2 - 60), float(y / 2 + 50) });
 	if (ImGui::Button("Single Player"))
 	{
-		dae::SceneManager::GetInstance().AddScene(new LevelScene("LevelScene"));
+		LevelScene* newScene = new LevelScene("LevelScene");
+		dae::SceneManager::GetInstance().AddScene(newScene);
+		dae::SceneManager::GetInstance().SetActive("LevelScene");
+		
 	}
-	ImGui::Button("Co-Op");
-	ImGui::Button("Versus");
+	if (ImGui::Button("Co-Op"))
+	{
+		LevelScene* newScene = new LevelScene("LevelScene");
+		newScene->SetCoop();
+		dae::SceneManager::GetInstance().AddScene(newScene);
+		dae::SceneManager::GetInstance().SetActive("LevelScene");
+	}
+	if (ImGui::Button("Versus"))
+	{
+		LevelScene* newScene = new LevelScene("LevelScene");
+		newScene->SetMultiplayer();
+		dae::SceneManager::GetInstance().AddScene(newScene);
+		dae::SceneManager::GetInstance().SetActive("LevelScene");
+	}
 	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
 }

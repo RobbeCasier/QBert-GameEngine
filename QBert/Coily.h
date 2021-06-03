@@ -21,7 +21,8 @@ public:
 	virtual void Initialize() override;
 	virtual void Update() override;
 
-	void AddPlayer(std::shared_ptr<Player> pPlayer);
+	void AddPlayers(std::vector<std::shared_ptr<Player>> players);
+	const int& GetPlayer();
 
 private:
 	virtual void StopFall();
@@ -41,8 +42,8 @@ private:
 	CoilyState m_CState = CoilyState::egg;
 
 	Graph* m_pGraph = nullptr;
-	std::shared_ptr<Player> m_pPlayer = nullptr;
+	std::vector<std::shared_ptr<Player>> m_Players;
 
-	std::shared_ptr<Command> m_cmdPlayerDeath;
+	std::vector<std::shared_ptr<Command>> m_cmdPlayerDeaths;
 };
 

@@ -7,6 +7,7 @@
 #include "Coily.h"
 #include "Ugg_Wrongway.h"
 #include "Slick_Sam.h"
+#include "RedBall.h"
 #include "EnemyController.h"
 
 void Grid::Initialize()
@@ -87,7 +88,7 @@ glm::vec2 Grid::GetColumnRow(const unsigned int& index) const
 
 int Grid::GetIndex(const unsigned int& col, const unsigned int& row) const
 {
-	unsigned short realCol;
+	unsigned int realCol;
 	if (row % 2 == 1)
 		realCol = (col - 1) / 2;
 	else
@@ -135,12 +136,25 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 	std::shared_ptr<Coily> coily = std::dynamic_pointer_cast<Coily>(actor);
 	std::shared_ptr<Ugg_Wrongway> uw = std::dynamic_pointer_cast<Ugg_Wrongway>(actor);
 	std::shared_ptr<Slick_Sam> ss = std::dynamic_pointer_cast<Slick_Sam>(actor);
+	std::shared_ptr<RedBall> rb = std::dynamic_pointer_cast<RedBall>(actor);
+
+	//find player
+	auto it = std::find(m_Players.begin(), m_Players.end(), actor);
+	int cmdIndex = -1;
+	//if player exist get corresponding command index
+	if (it != m_Players.end())
+	{
+		cmdIndex = (int)std::distance(m_Players.begin(), it);
+	}
+	
+	//is the current landed cell empty
 	if (!m_Cells[index]->IsCube() && !m_Cells[index]->IsDisc())
 	{
 		//if coily add points
 		if (coily)
 		{
-			m_cmdBeatCoily->Execute();
+			const int& player = coily->GetPlayer();
+			m_Commands[player].at("BeatCoily")->Execute();
 			CoilyFall coilyFall(coily);
 			coilyFall.Execute();
 		}
@@ -154,25 +168,58 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 			SlickAndSamFall ssFall(ss);
 			ssFall.Execute();
 		}
+		else if (rb)
+		{
+			RedBallFall rbFall(rb);
+			rbFall.Execute();
+		}
 		else
 		{
-			m_cmdFallPlayer->Execute();
+			if (cmdIndex >= 0)
+			{
+				m_Commands[cmdIndex].at("Fall")->Execute();
+			}
 		}
 	}
+	//is the cell a cube
 	else if (m_Cells[index]->IsCube())
 	{
-		if (coily || uw)
+		ColorState colorState;
+		if (coily || uw || rb)
 			return;
 		else if (ss)
-			m_Cells[index]->ChangeColor(true);
+			colorState = m_Cells[index]->ChangeColor(true);
 		else
-			m_Cells[index]->ChangeColor();
+			colorState = m_Cells[index]->ChangeColor();
+
+		//does player exist
+		if (index >= 0)
+		{
+			switch (colorState)
+			{
+			case ColorState::INTERMEDIAT:
+				m_Commands[cmdIndex].at("Intermediat")->Execute();
+				break;
+			case ColorState::FINAL:
+				m_Commands[cmdIndex].at("Final")->Execute();
+				CheckCompletion();
+				break;
+			default:
+				break;
+			}
+		}
 	}
+	//is the cell a disc
 	else
 	{
 		if (coily || uw)
 			return;
-		m_cmdLift->Execute();
+
+		//does player exist
+		if (index >= 0)
+		{
+			m_Commands[cmdIndex].at("Lift")->Execute();
+		}
 		m_Cells[index]->RemoveDisc();
 	}
 
@@ -225,14 +272,21 @@ void Grid::CheckCompletion()
 	}
 }
 
-void Grid::ConstructPiramid(std::shared_ptr<Player> player, SideColor color, std::vector<int> colorOrder)
+void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players, SideColor color, std::vector<int> colorOrder)
 {
 	//setup player
-	m_pPlayer = player;
-	m_cmdBeatCoily = std::make_unique<BeatCoily>(m_pPlayer);
-	m_cmdRemainingDisc = std::make_unique<RemainingDisc>(m_pPlayer);
-	m_cmdFallPlayer = std::make_unique<Fall>(m_pPlayer);
-	m_cmdLift = std::make_unique<Lift>(m_pPlayer);
+	m_Players = players;
+	for (int i = 0; i < m_Players.size(); ++i)
+	{
+		std::map<std::string, std::shared_ptr<Command>> commands;
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("BeatCoily", std::make_unique<BeatCoily>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("RemainingDisc", std::make_unique<RemainingDisc>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Fall", std::make_unique<Fall>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Lift", std::make_unique<Lift>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Intermediat", std::make_unique<ChangeColorPlayerIntermediat>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Final", std::make_unique<ChangeColorPlayerFinal>(m_Players[i])));
+		m_Commands.push_back(commands);
+	}
 	//m_TopCol is written in double coordinate system
 	//change back to normal
 	unsigned short realCol;
@@ -256,7 +310,7 @@ void Grid::ConstructPiramid(std::shared_ptr<Player> player, SideColor color, std
 			if (c == 0 || c == r)
 				isSide = true;
 			index = (col + c) + (row * m_NrCols);
-			m_Cells[index]->SetCube(player, shared_from_this(), color, colorOrder, isSide);
+			m_Cells[index]->SetCube(color, colorOrder, isSide);
 		}
 	}
 }
@@ -325,7 +379,10 @@ void Grid::NewDiscs(SideColor color, std::vector<glm::vec2> positions)
 		{
 			if (m_Cells[index]->IsDisc())
 			{
-				m_cmdRemainingDisc->Execute();
+				for (const auto& commands : m_Commands)
+				{
+					commands.at("RemainingDisc")->Execute();
+				}
 				m_Cells[index]->RemoveDisc();
 			}
 			

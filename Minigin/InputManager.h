@@ -31,10 +31,10 @@ namespace dae
 		S = SDL_SCANCODE_S,
 		A = SDL_SCANCODE_A,
 		D = SDL_SCANCODE_D,
-		Up = VK_UP,
-		Down = VK_DOWN,
-		Left = VK_LEFT,
-		Right = VK_RIGHT
+		Up = SDL_SCANCODE_UP,
+		Down = SDL_SCANCODE_DOWN,
+		Left = SDL_SCANCODE_LEFT,
+		Right = SDL_SCANCODE_RIGHT
 	};
 
 

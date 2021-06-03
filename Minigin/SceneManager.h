@@ -9,6 +9,7 @@ namespace dae
 	{
 	public:
 		void AddScene(Scene* scene);
+		void SetActive(const std::string& sceneName);
 
 		void Update();
 		void Render(SDL_Window* window);
@@ -16,5 +17,6 @@ namespace dae
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::shared_ptr<Scene>> m_Scenes;
+		std::shared_ptr<Scene> m_ActiveScene;
 	};
 }

@@ -2,6 +2,7 @@
 #include <Commands.h>
 #include "Player.h"
 #include <ServiceLocator.h>
+#include <GameContext.h>
 
 class JumpBottomLeft final : public Command
 {
@@ -47,6 +48,7 @@ public:
 	explicit Death(std::shared_ptr<PlayerComponent> actor) : Command(actor) {}
 	void Execute() override
 	{
+		GameContext::GetInstance().Collide();
 		std::dynamic_pointer_cast<Player>(m_Actor)->DecreaseHealth();
 	}
 };
