@@ -257,12 +257,17 @@ void Grid::CheckCompletion()
 		}
 
 		++m_CurrentRound;
+		//set max to 5
 		m_CurrentRound = m_CurrentRound % (m_MaxRounds+1);
+		//from 4 to 5 to 0
 		if (m_CurrentRound == 0)
 		{
+			//add level
 			++m_CurrentLevel;
+			//back to 1
 			++m_CurrentRound;
 			m_ActorChanged->Notify(shared_from_this(), "NEW_LEVEL");
+			m_ActorChanged->Notify(shared_from_this(), "NEW_ROUND");
 		}
 		else
 			m_ActorChanged->Notify(shared_from_this(), "NEW_ROUND");
@@ -314,6 +319,10 @@ void Grid::ConstructPiramid()
 			m_Cells[index]->SetCube(lvParam.sideColor, lvParam.order, isSide);
 		}
 	}
+	ConstructDiscs();
+
+	m_pGraph = new Graph();
+	m_pGraph->CreateGraphFromGrid(m_NrCols, m_NrRows, m_Cells);
 }
 
 void Grid::ConstructDiscs()
@@ -321,7 +330,7 @@ void Grid::ConstructDiscs()
 	const LevelParameters& lvParam = LevelReader::GetInstance().GetLevelParamters();
 	const std::vector<glm::vec2>& pos = lvParam.discsPositions;
 	int x, y;
-	for (int i = 0; i < pos.size(); i++)
+	for (int i = 0; i < pos.size(); ++i)
 	{
 		x = (int)pos[i].x;
 		y = (int)pos[i].y;
@@ -335,8 +344,6 @@ void Grid::ConstructDiscs()
 
 		m_Cells[index]->SetDisc(lvParam.sideColor);
 	}
-	m_pGraph = new Graph();
-	m_pGraph->CreateGraphFromGrid(m_NrCols, m_NrRows, m_Cells);
 }
 
 void Grid::NewPiramid()
@@ -376,9 +383,11 @@ void Grid::NewPiramid()
 			block->SetGameType(lvParam.gameType);
 		}
 	}
+
+	ConstructDiscs();
 }
 
-void Grid::NewDiscs()
+void Grid::CollectDiscs()
 {
 	//check if there are any left from previous level
 	//and destroy
@@ -398,6 +407,4 @@ void Grid::NewDiscs()
 		}
 		m_DiscCells.clear();
 	}
-
-	ConstructDiscs();
 }

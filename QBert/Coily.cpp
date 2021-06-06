@@ -157,6 +157,8 @@ void Coily::CheckCollision()
 	auto players = PlayerManager::GetInstance().GetPlayers();
 	for (int i = 0; i < players.size(); ++i)
 	{
+		if (players[i]->IsUsingLift())
+			continue;
 		auto playerRect = players[i]->GetRect();
 		playerRect /= 2.0f;
 		Shape::Rect rect;

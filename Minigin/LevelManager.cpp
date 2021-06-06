@@ -14,11 +14,11 @@ void dae::LevelManager::SetActiveLevel(const std::string& levelName)
 		if (level->GetName()._Equal(levelName))
 		{
 			m_pActiveLevel = level;
-			m_pActiveLevel->Initialize();
 		}
 		else
 			level->Deactivate();
 	}
+	m_pActiveLevel->Initialize();
 }
 
 void dae::LevelManager::Update()

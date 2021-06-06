@@ -24,6 +24,8 @@ public:
     void SetGrid(std::shared_ptr<Grid> grid);
     void SetStartLocation(const int& col, const int& row);
 
+    bool IsUsingLift() { return m_State == CharacterState::elevate; }
+
     void DecreaseHealth();
     void Fall();
     void Lift();

@@ -8,30 +8,31 @@
 #include <rapidjson\istreamwrapper.h>
 #include <rapidjson\stringbuffer.h>
 
-#define psln(x) std::cout<<#x " = "<<(x)<<std::endl
-
-void LevelReader::Read(const int& level, const int& round)
+bool LevelReader::Read(const int& level, const int& round)
 {
 	m_LevelParameters.order.clear();
 	m_LevelParameters.discsPositions.clear();
 	std::string file = std::to_string(level) + "_" + std::to_string(round);
+	std::string path = "../Data/Levels/" + file;
 #ifdef _DEBUG
-	std::string path = "../Data/Levels/" + file + ".json";
-	ReadJson(path);
+	path += ".json";
+	return ReadJson(path);
 #endif
-#ifdef _RELEASE
+#ifdef NDEBUG
+	path += ".bin";
+	return ReadBin(path);
 #endif
 
 }
 
-void LevelReader::ReadJson(const std::string& path)
+bool LevelReader::ReadJson(const std::string& path)
 {
 	std::ifstream input;
 	input.open(path, std::ios::in | std::ios::binary);
 	if (!input.is_open())
 	{
 		std::cout << "Could not open file" << std::endl;
-		return;
+		return false;
 	}
 
 	//read whole file
@@ -44,11 +45,6 @@ void LevelReader::ReadJson(const std::string& path)
 
 	rapidjson::Document doc;
 	doc.Parse<0>(json.c_str(), json.size());
-	if (doc.HasParseError())
-	{
-		rapidjson::ParseErrorCode code = doc.GetParseError();
-		psln(code);
-	}
 
 	for (rapidjson::Value::ConstValueIterator itr = doc.Begin(); itr != doc.End(); ++itr)
 	{
@@ -64,7 +60,7 @@ void LevelReader::ReadJson(const std::string& path)
 		m_LevelParameters.maxSSSpawn = ReadJsonInteger(position, "ss");
 		m_LevelParameters.bonus = ReadJsonInteger(position, "bonus");
 	}
-	input.close();
+	return true;
 
 }
 
@@ -132,6 +128,67 @@ bool LevelReader::ReadJsonBool(const rapidjson::Value& position, const std::stri
 	return boolean;
 }
 
-void LevelReader::ReadBin(const std::string& path)
+bool LevelReader::ReadBin(const std::string& path)
 {
+	std::ifstream input;
+	input.open(path, std::ios::in | std::ios::binary);
+	if (!input.is_open())
+	{
+		std::cout << "Could not open file" << std::endl;
+		return false;
+	}
+
+	//read gametype
+	char gameTypeLength;
+	int size;
+	std::string type;
+	input.read((char*)&gameTypeLength, sizeof(char));
+	size = (int)gameTypeLength;
+	input.read(&type[0], size);
+	if (type._Equal("single"))
+		m_LevelParameters.gameType = GameType::singleColor;
+	else if (type._Equal("double"))
+		m_LevelParameters.gameType = GameType::doubleColor;
+	else if (type._Equal("single_repeat"))
+		m_LevelParameters.gameType = GameType::RepeatSingleColor;
+
+	//side color
+	input.read((char*)&m_LevelParameters.sideColor, sizeof(int));
+
+	//order
+	char amount;
+	input.read((char*)&amount, sizeof(char));
+	int orders = (int)amount;
+	for (int i = 0; i < orders; ++i)
+	{
+		int nr;
+		input.read((char*)&nr, sizeof(int));
+		m_LevelParameters.order.push_back(nr);
+	}
+
+	//discs positions
+	input.read((char*)&size, sizeof(int));
+	size /= 2 * sizeof(int);
+	for (int i = 0; i < size; ++i)
+	{
+		int x, y;
+		input.read((char*)&x, sizeof(int));
+		input.read((char*)&y, sizeof(int));
+		m_LevelParameters.discsPositions.push_back({ x,y });
+	}
+
+	//spawn red ball
+	input.read((char*)&m_LevelParameters.spawnRedBall, sizeof(bool));
+	//spawn green ball
+	input.read((char*)&m_LevelParameters.spawnGreenBall, sizeof(bool));
+
+	//max uw spawn
+	input.read((char*)&m_LevelParameters.maxUWSpawn, sizeof(int));
+
+	//max ss spawn
+	input.read((char*)&m_LevelParameters.maxSSSpawn, sizeof(int));
+
+	//bonus
+	input.read((char*)&m_LevelParameters.bonus, sizeof(int));
+	return true;
 }

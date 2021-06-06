@@ -223,7 +223,7 @@ void Player::DecreaseHealth()
 		--m_Health;
 		if (m_Health == 0)
 		{
-			((QbertGameController&)ServiceLocator::GetGameController()).SetScore(m_Score, m_PlayerID);
+			PlayerManager::GetInstance().SetScore(m_Score, m_PlayerID);
 			PlayerManager::GetInstance().RemovePlayer(m_PlayerID);
 			auto thisObject = GetGameObject();
 			GetGameObject()->GetScene()->RemoveObject(std::shared_ptr<GameObject>(thisObject));

@@ -185,6 +185,7 @@
     <ClCompile Include="CellComponent.cpp" />
     <ClCompile Include="Coily.cpp" />
     <ClCompile Include="Disc.cpp" />
+    <ClCompile Include="EndUI.cpp" />
     <ClCompile Include="GameObservers.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="GreenBall.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="CellComponent.h" />
     <ClInclude Include="Coily.h" />
     <ClInclude Include="Disc.h" />
+    <ClInclude Include="EndUI.h" />
     <ClInclude Include="EnemyController.h" />
     <ClInclude Include="GameObservers.h" />
     <ClInclude Include="GeneralStruct.h" />

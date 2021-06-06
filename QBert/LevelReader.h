@@ -41,16 +41,16 @@ class LevelReader final : public dae::Singleton<LevelReader>
 public:
 	LevelReader() = default;
 
-	void Read(const int& level, const int& round);
+	bool Read(const int& level, const int& round);
 	LevelParameters GetLevelParamters() { return m_LevelParameters; }
 private:
-	void ReadJson(const std::string& path);
+	bool ReadJson(const std::string& path);
 	GameType ReadJsonGameType(const rapidjson::Value& position, const std::string& typeName);
 	std::vector<int> ReadJsonOrder(const rapidjson::Value& position, const std::string& typeName);
 	std::vector<glm::vec2> ReadJsonDiscLocation(const rapidjson::Value& position, const std::string& typeName);
 	int ReadJsonInteger(const rapidjson::Value& position, const std::string& typeName);
 	bool ReadJsonBool(const rapidjson::Value& position, const std::string& typeName);
-	void ReadBin(const std::string& path);
+	bool ReadBin(const std::string& path);
 
 	LevelParameters m_LevelParameters;
 };

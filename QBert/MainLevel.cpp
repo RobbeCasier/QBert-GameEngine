@@ -21,6 +21,7 @@
 #include <FPS.h>
 #include "Grid.h"
 
+
 void MainLevel::Initialize()
 {
 	auto gameController = (QbertGameController&)ServiceLocator::GetGameController();
@@ -148,8 +149,6 @@ void MainLevel::Initialize()
 #pragma endregion
 
 	m_pGrid->ConstructPiramid();
-	m_pGrid->ConstructDiscs();
-
 
 	go = std::make_shared<GameObject>();
 	m_pGameScene->AddObject(go);
@@ -177,6 +176,8 @@ void MainLevel::Initialize()
 
 void MainLevel::Update()
 {
+	if (PlayerManager::GetInstance().GetPlayers().size() == 0)
+		((QbertGameController&)ServiceLocator::GetGameController()).SetQbertState(QbertGameState::GAMEOVER);
 	//freeze time
 	if (GameContext::GetInstance().GetGameState() == GameState::GREENBALL)
 	{
@@ -208,9 +209,13 @@ void MainLevel::Update()
 	{
 		int lv = m_pGrid->GetCurrentLevel();
 		int rnd = m_pGrid->GetCurrentRound();
-		LevelReader::GetInstance().Read(lv, rnd);
+		m_pGrid->CollectDiscs();
+		if (!LevelReader::GetInstance().Read(lv, rnd))
+		{
+			((QbertGameController&)ServiceLocator::GetGameController()).SetQbertState(QbertGameState::END);
+			return;
+		}
 		m_pGrid->NewPiramid();
-		m_pGrid->NewDiscs();
 		m_pSpawner->Clear();
 		m_pSpawner->LoadLevelData();
 	}

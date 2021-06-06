@@ -27,9 +27,7 @@ void LevelDisplay::OnNotify(std::shared_ptr<BaseComponent> actor, const std::str
 {
 	if (event == "NEW_LEVEL")
 	{
-		GameContext::GetInstance().Win();
 		m_UI->SetText("LEVEL: " + std::to_string(std::dynamic_pointer_cast<Grid>(actor)->GetCurrentLevel()));
-		ServiceLocator::GetSoundSystem().Play(5, 100);
 	}
 }
 

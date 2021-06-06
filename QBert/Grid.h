@@ -23,9 +23,8 @@ public:
 	void SetTopPiramid(const unsigned short& col, const unsigned short& row);
 
 	void ConstructPiramid();
-	void ConstructDiscs();
 	void NewPiramid();
-	void NewDiscs();
+	void CollectDiscs();
 	glm::vec2 GetPos(const unsigned short& col, const unsigned short& row) const;
 	glm::vec2 GetColumnRow(const unsigned int& index) const;
 	int GetIndex(const unsigned int& col, const unsigned int& row) const;
@@ -40,6 +39,7 @@ public:
 	int GetCurrentRound() { return m_CurrentRound; }
 	Graph* GetGraph() const { return m_pGraph; }
 private:
+	void ConstructDiscs();
 
 	float m_CellSize = 0.f;
 	bool m_NewRound = false;

@@ -43,9 +43,6 @@
     <Filter Include="Header Files\Enemies">
       <UniqueIdentifier>{bc331f13-45f0-4c33-b41b-ddb84bc17897}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scene\LevelScene">
-      <UniqueIdentifier>{a7007b6b-fca5-4ef0-bc37-f0f95097be9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Scene\MainMenu">
       <UniqueIdentifier>{354cddf4-cacc-4900-aec2-155bd7569ea8}</UniqueIdentifier>
     </Filter>
@@ -132,6 +129,9 @@
     <ClCompile Include="PlayerManager.cpp">
       <Filter>Source Files\Characters</Filter>
     </ClCompile>
+    <ClCompile Include="EndUI.cpp">
+      <Filter>Source Files\Scenes\MainMenu</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -217,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="PlayerManager.h">
       <Filter>Header Files\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="EndUI.h">
+      <Filter>Header Files\Scene\MainMenu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

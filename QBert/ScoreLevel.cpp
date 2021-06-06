@@ -6,12 +6,14 @@
 #include <ServiceLocator.h>
 #include "QbertGameController.h"
 #include <UIComponent.h>
+#include "PlayerManager.h"
+#include "EndUI.h"
 
 void ScoreLevel::Initialize()
 {
 	m_pEndScene = dae::SceneManager::GetInstance().CreateScene("EndScene");
 	auto controller = ((QbertGameController&)ServiceLocator::GetGameController());
-	std::vector<int> scores = controller.GetScores();
+	std::vector<int> scores = PlayerManager::GetInstance().GetScores();
 
 	auto font24 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 24);
 	auto font36 = ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
@@ -33,19 +35,17 @@ void ScoreLevel::Initialize()
 	if (controller.GetQbertGameMode() != GameMode::COOP)
 	{
 		go = std::make_shared<GameObject>();
-		go->SetPosition(0, 10);
+		go->SetPosition(300, 75);
 		auto ui = go->AddComponent<UIComponent>();
-		//player 1
-		auto text = ui->AddTextComponent("Player1txt", "Player 1", font36);
 		//score
 		std::string score = std::to_string(scores[0]);
-		text = ui->AddTextComponent("Score", score, font24, 0, 50);
+		auto text = ui->AddTextComponent("Score", score, font36, 0, 50);
 		m_pEndScene->AddObject(go);
 	}
 	else
 	{
 		go = std::make_shared<GameObject>();
-		go->SetPosition(0, 10);
+		go->SetPosition(150, 75);
 		auto ui = go->AddComponent<UIComponent>();
 		//player 1
 		auto text = ui->AddTextComponent("Player1txt", "Player 1", font36);
@@ -55,7 +55,7 @@ void ScoreLevel::Initialize()
 		m_pEndScene->AddObject(go);
 
 		go = std::make_shared<GameObject>();
-		go->SetPosition(500, 10);
+		go->SetPosition(450, 75);
 		ui = go->AddComponent<UIComponent>();
 		//player 1
 		text = ui->AddTextComponent("Player2txt", "Player 2", font36);
@@ -65,6 +65,10 @@ void ScoreLevel::Initialize()
 		m_pEndScene->AddObject(go);
 	}
 
+
+	go = std::make_shared<GameObject>();
+	go->AddComponent<EndUI>();
+	m_pEndScene->AddObject(go);
 }
 
 void ScoreLevel::Deactivate()
