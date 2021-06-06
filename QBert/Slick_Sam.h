@@ -33,7 +33,6 @@ public:
     virtual void Initialize() override;
     virtual void Update() override;
 
-    void SetPlayers(const std::vector<std::shared_ptr<Player>>& playesr);
     void SetGrid(std::shared_ptr<Grid> grid) { m_pGrid = grid; }
     void SetStartLocation(const int& col, const int& row);
 
@@ -58,7 +57,6 @@ private:
 
     ////Pointers
     std::shared_ptr<TextureComponent> m_pTextureComponent = nullptr;
-    std::vector<std::shared_ptr<Player>> m_Players;
     std::shared_ptr<Grid> m_pGrid = nullptr;
 
     std::unique_ptr<Subject> m_ActorChanged = nullptr;

@@ -180,7 +180,6 @@ void Spawner::SpawnCoily()
 	m_pCoily = std::make_shared<GameObject>();
 	auto coilyComp = m_pCoily->AddComponent<Coily>();
 	coilyComp->SetGrid(m_pGrid);
-	coilyComp->AddPlayers(m_Players);
 	coilyComp->SetStartLocation((int)location.x, (int)location.y);
 	coilyComp->AddObserver(m_obsKillEnemy);
 	if (((QbertGameController&)ServiceLocator::GetGameController()).GetQbertGameMode() == GameMode::VS)
@@ -201,7 +200,6 @@ void Spawner::SpawnUW()
 	obj->AddComponent(uw);
 
 	uw->SetGrid(m_pGrid);
-	uw->SetPlayers(m_Players);
 	uw->SetStartLocation((int)startLocation.x, (int)startLocation.y);
 	uw->AddObserver(m_obsKillEnemy);
 
@@ -222,7 +220,6 @@ void Spawner::SpawnSS()
 	obj->AddComponent(ss);
 
 	ss->SetGrid(m_pGrid);
-	ss->SetPlayers(m_Players);
 	ss->SetStartLocation((int)startLocation.x, (int)startLocation.y);
 	ss->AddObserver(m_obsKillEnemy);
 
@@ -242,7 +239,6 @@ void Spawner::SpawnRB()
 	obj->AddComponent(rb);
 
 	rb->SetGrid(m_pGrid);
-	rb->SetPlayers(m_Players);
 	rb->SetStartLocation((int)startLocation.x, (int)startLocation.y);
 	rb->AddObserver(m_obsKillEnemy);
 
@@ -259,7 +255,6 @@ void Spawner::SpawnGB()
 	m_GreenBall = std::make_shared<GameObject>();
 	auto gb = m_GreenBall->AddComponent<GreenBall>();
 	gb->SetGrid(m_pGrid);
-	gb->SetPlayers(m_Players);
 	gb->SetStartLocation((int)location.x, (int)location.y);
 	gb->AddObserver(m_obsKillEnemy);
 	m_pScene->AddObject(m_GreenBall);

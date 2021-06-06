@@ -4,9 +4,15 @@
 #include "Grid.h"
 #include <ServiceLocator.h>
 #include <GameContext.h>
+#include "QbertGameController.h"
+#include "PlayerManager.h"
+
+unsigned int Player::m_ID = 0;
 
 void Player::Initialize()
 {
+	m_PlayerID = m_ID;
+	++m_ID;
 	m_TextureComponent = m_GameObject->AddComponent<TextureComponent>();
 	m_TextureComponent->SetTexture("qbert.png");
 	m_TextureComponent->SetSize(m_CharacterWith, m_CharacterHeight);
@@ -215,6 +221,13 @@ void Player::DecreaseHealth()
 	if (m_Health > 0)
 	{
 		--m_Health;
+		if (m_Health == 0)
+		{
+			((QbertGameController&)ServiceLocator::GetGameController()).SetScore(m_Score, m_PlayerID);
+			PlayerManager::GetInstance().RemovePlayer(m_PlayerID);
+			auto thisObject = GetGameObject();
+			GetGameObject()->GetScene()->RemoveObject(std::shared_ptr<GameObject>(thisObject));
+		}
 	}
 	m_ActorChanged->Notify(shared_from_this(), "IS_DEAD");
 }
@@ -237,7 +250,7 @@ void Player::Lift()
 	m_LiftDirection = m_LiftLocation - curPos2;
 	m_LiftDirection = glm::normalize(m_LiftDirection);
 
-	//distance is how many blocks from eachother
+	//distance, is how many blocks from eachother
 	m_LiftDistance = m_CurrentRow - (m_StartRow - rowOffset);
 }
 

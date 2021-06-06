@@ -5,6 +5,7 @@
 #include <GameContext.h>
 #include <InputManager.h>
 #include "EnemyController.h"
+#include "PlayerManager.h"
 
 void Coily::Initialize()
 {
@@ -13,6 +14,12 @@ void Coily::Initialize()
 	m_TextureComponent->SetSize(m_CharacterWith, m_CharacterWith);
 	m_CurrentSpriteCol = 1;
 	m_TextureComponent->SetSource(m_CurrentSpriteCol, 0, m_NrColsEgg, m_NrRowsEgg);
+
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (auto player : players)
+	{
+		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
+	}
 }
 
 void Coily::Update()
@@ -73,7 +80,10 @@ void Coily::Update()
 
 				int currentIndex = GetIndex();
 				std::vector<int> endIndices;
-				for (auto player : m_Players)
+
+				//set the players to the graph
+				auto players = PlayerManager::GetInstance().GetPlayers();
+				for (auto& player : players)
 					endIndices.push_back(player->GetIndex());
 
 				m_pGraph->FindPath(currentIndex, endIndices);
@@ -95,18 +105,9 @@ void Coily::Update()
 	CheckCollision();
 }
 
-void Coily::AddPlayers(std::vector<std::shared_ptr<Player>> players)
-{
-	m_Players = players;
-	for (auto player : m_Players)
-	{
-		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
-	}
-}
-
 const int& Coily::GetPlayer()
 {
-	if (m_Players.size() == 1)
+	if (PlayerManager::GetInstance().GetPlayers().size() == 1)
 		return 0;
 	return m_pGraph->GetRouteIndex();
 }
@@ -118,8 +119,11 @@ void Coily::StopFall()
 
 void Coily::StopDescend()
 {
+	//Turn back one sprite
 	--m_CurrentSpriteCol;
+	//Update texture
 	ChangeLookDirection();
+
 	m_CurrentFallSpeed = 0.f;
 	m_LiftLocation.y -= m_CharacterHeight / 2;
 	this->SetPosition({ m_LiftLocation, 0.f });
@@ -150,9 +154,10 @@ void Coily::GetRandomJumpLocation()
 
 void Coily::CheckCollision()
 {
-	for (int i = 0; i < m_Players.size(); ++i)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (int i = 0; i < players.size(); ++i)
 	{
-		auto playerRect = m_Players[i]->GetRect();
+		auto playerRect = players[i]->GetRect();
 		playerRect /= 2.0f;
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();

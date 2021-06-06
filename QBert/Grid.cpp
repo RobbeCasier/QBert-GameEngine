@@ -11,6 +11,7 @@
 #include "GreenBall.h"
 #include "EnemyController.h"
 #include "LevelReader.h"
+#include "PlayerManager.h"
 
 void Grid::Initialize()
 {
@@ -129,12 +130,13 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 	std::shared_ptr<GreenBall> gb = std::dynamic_pointer_cast<GreenBall>(actor);
 
 	//find player
-	auto it = std::find(m_Players.begin(), m_Players.end(), actor);
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	auto it = std::find(players.begin(), players.end(), actor);
 	int cmdIndex = -1;
 	//if player exist get corresponding command index
-	if (it != m_Players.end())
+	if (it != players.end())
 	{
-		cmdIndex = (int)std::distance(m_Players.begin(), it);
+		cmdIndex = (int)std::distance(players.begin(), it);
 	}
 	
 	//is the current landed cell empty
@@ -268,20 +270,20 @@ void Grid::CheckCompletion()
 	}
 }
 
-void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players)
+void Grid::ConstructPiramid()
 {
 	//setup player
-	m_Players = players;
-	for (int i = 0; i < m_Players.size(); ++i)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (int i = 0; i < players.size(); ++i)
 	{
 		std::map<std::string, std::shared_ptr<Command>> commands;
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("BeatCoily", std::make_unique<BeatCoily>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("RemainingDisc", std::make_unique<RemainingDisc>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Bonus", std::make_unique<Bonus>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Fall", std::make_unique<Fall>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Lift", std::make_unique<Lift>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Intermediat", std::make_unique<ChangeColorPlayerIntermediat>(m_Players[i])));
-		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Final", std::make_unique<ChangeColorPlayerFinal>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("BeatCoily", std::make_unique<BeatCoily>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("RemainingDisc", std::make_unique<RemainingDisc>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Bonus", std::make_unique<Bonus>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Fall", std::make_unique<Fall>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Lift", std::make_unique<Lift>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Intermediat", std::make_unique<ChangeColorPlayerIntermediat>(players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Final", std::make_unique<ChangeColorPlayerFinal>(players[i])));
 		m_Commands.push_back(commands);
 	}
 	//m_TopCol is written in double coordinate system
@@ -339,7 +341,8 @@ void Grid::ConstructDiscs()
 
 void Grid::NewPiramid()
 {
-	for (auto& player : m_Players)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (auto& player : players)
 		player->Reset();
 
 	m_NewRound = false;

@@ -32,16 +32,15 @@ void dae::Scene::Add()
 
 void dae::Scene::Remove()
 {
-	for (auto object : m_ObjectsToDelete)
+	for (auto& object : m_ObjectsToDelete)
 	{
 		auto it = std::find(m_Objects.begin(), m_Objects.end(), object);
 		if (it != m_Objects.end())
 		{
 			m_Objects.erase(it);
-			object.reset();
 		}
 	}
-	m_ObjectsToDelete.clear();
+	//m_ObjectsToDelete.clear();
 }
 
 void dae::Scene::Update()

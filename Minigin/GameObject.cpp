@@ -27,7 +27,7 @@ void dae::GameObject::Render() const
 	for (auto element: m_Components)
 	{
 		if (element != nullptr)
-			element->Render(m_pRenderComponent, m_pTransformComponent->GetPosition());
+			element->Render(m_pTransformComponent->GetPosition());
 	}
 }
 

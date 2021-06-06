@@ -1,0 +1,25 @@
+[{
+	"type": "double",
+	"color": 0,
+	"order": [
+		0,
+		2,
+		1
+	],
+	"disc": [
+		{
+			"c": 7,
+			"r": 4
+		},
+		{
+			"c": 16,
+			"r": 7
+		}
+	],
+	"red": true,
+	"green": true,
+	"uw": 0,
+	"ss": 1,
+	"bonus": 2500
+}
+]

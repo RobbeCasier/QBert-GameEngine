@@ -3,6 +3,7 @@
 #include "Grid.h"
 #include "GameTime.h"
 #include "GameContext.h"
+#include "PlayerManager.h"
 
 int GreenBall::m_CurrentId = 0;
 
@@ -17,6 +18,12 @@ void GreenBall::Initialize()
 
 	//setup texture source
 	m_pTextureComponent->SetSource(m_CurrentSpriteCol, m_CurrentSpriteRow, m_NrOfCols, m_NrOfRows);
+
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (auto& player : players)
+	{
+		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
+	}
 }
 
 void GreenBall::Update()
@@ -68,15 +75,6 @@ void GreenBall::SetStartLocation(const int& col, const int& row)
 	m_FallLocation.y -= m_CharacterHeight;
 
 	m_GameObject->SetPosition(pos.x, pos.y);
-}
-
-void GreenBall::SetPlayers(const std::vector<std::shared_ptr<Player>>& players)
-{
-	m_Players = players;
-	for (auto player : m_Players)
-	{
-		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
-	}
 }
 
 void GreenBall::AddObserver(std::shared_ptr<Observer> observer)
@@ -181,9 +179,10 @@ void GreenBall::UpdateDescend()
 
 void GreenBall::CheckCollision()
 {
-	for (int i = 0; i < m_Players.size(); ++i)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (int i = 0; i < players.size(); ++i)
 	{
-		auto playerRect = m_Players[i]->GetRect();
+		auto playerRect = players[i]->GetRect();
 		playerRect /= 2.0f;
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();

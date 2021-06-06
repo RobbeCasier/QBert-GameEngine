@@ -3,6 +3,7 @@
 #include "Grid.h"
 #include <GameTime.h>
 #include <GameContext.h>
+#include "PlayerManager.h"
 
 int Slick_Sam::m_CurrentId = 0;
 
@@ -25,6 +26,11 @@ void Slick_Sam::Initialize()
 
 	m_pTextureComponent->SetSource(m_CurrentSpriteCol, m_CurrentSpriteRow, m_NrOfCols, m_NrOfRows);
 
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (auto player : players)
+	{
+		m_cmdCatchs.push_back(std::make_shared<Catch>(player));
+	}
 }
 
 void Slick_Sam::Update()
@@ -52,15 +58,6 @@ void Slick_Sam::Update()
 	}
 
 	CheckCollision();
-}
-
-void Slick_Sam::SetPlayers(const std::vector<std::shared_ptr<Player>>& players)
-{
-	m_Players = players;
-	for (auto player : m_Players)
-	{
-		m_cmdCatchs.push_back(std::make_shared<Catch>(player));
-	}
 }
 
 void Slick_Sam::SetStartLocation(const int& col, const int& row)
@@ -204,9 +201,10 @@ void Slick_Sam::UpdateDescend()
 
 void Slick_Sam::CheckCollision()
 {
-	for (int i = 0; i < m_Players.size(); ++i)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (int i = 0; i < players.size(); ++i)
 	{
-		auto playerRect = m_Players[i]->GetRect();
+		auto playerRect = players[i]->GetRect();
 		Shape::Rect rect{};
 		auto transform = m_GameObject->GetComponent<Transform>();
 		rect.x = transform->GetPosition().x;

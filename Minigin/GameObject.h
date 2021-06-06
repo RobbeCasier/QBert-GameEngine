@@ -4,6 +4,7 @@
 #include "Transform.h"
 #include "TextureComponent.h"
 #include "RenderComponent.h"
+#include "Scene.h"
 
 namespace dae
 {
@@ -49,6 +50,9 @@ namespace dae
 			std::remove(m_Components.begin(), m_Components.end(), comp);
 		}
 
+		void SetScene(std::shared_ptr<Scene> pScene) { m_pScene = pScene; }
+		std::shared_ptr<Scene> GetScene() { return m_pScene; }
+
 		void SetPosition(float x, float y);
 
 		GameObject() { Initialize(); };
@@ -66,5 +70,6 @@ namespace dae
 		std::shared_ptr<Transform> m_pTransformComponent;
 		std::shared_ptr<RenderComponent> m_pRenderComponent;
 		std::shared_ptr<TextureComponent> m_pTextureComponent;
+		std::shared_ptr<Scene> m_pScene;
 	};
 }

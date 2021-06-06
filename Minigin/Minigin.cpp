@@ -4,6 +4,7 @@
 #include <thread>
 #include "InputManager.h"
 #include "SceneManager.h"
+#include "LevelManager.h"
 #include "Renderer.h"
 #include "ResourceManager.h"
 #include <SDL.h>
@@ -74,7 +75,9 @@ void dae::Minigin::Run()
 
 	{
 		auto& renderer = Renderer::GetInstance();
+		auto& gameController = ServiceLocator::GetGameController();
 		auto& sceneManager = SceneManager::GetInstance();
+		auto& levelManager = LevelManager::GetInstance();
 		auto& input = InputManager::GetInstance();
 
 		auto& audio = ServiceLocator::GetSoundSystem();
@@ -93,6 +96,8 @@ void dae::Minigin::Run()
 			doContinue = input.ProcessInput();
 			input.HandleInput();
 
+			gameController.Update();
+			levelManager.Update();
 			sceneManager.Update();
 			renderer.Render();
 

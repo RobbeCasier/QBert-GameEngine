@@ -37,16 +37,6 @@ void dae::InputManager::AddInput(KeyboardKeys key, std::unique_ptr<Command> comm
 		m_KeyboardCommands.at((int)key) = std::move(command);
 }
 
-void dae::InputManager::RemoveInput(ControllerButton button, const unsigned int& player)
-{
-	m_Controllers[player]->controllerCommandMap.erase((unsigned int)button);
-}
-
-void dae::InputManager::RemoveInput(KeyboardKeys key)
-{
-	m_KeyboardCommands.erase((unsigned int)key);
-}
-
 bool dae::InputManager::ProcessInput()
 {
 	//update states

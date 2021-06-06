@@ -27,8 +27,7 @@ public:
 
 	virtual void Initialize() = 0;
 	virtual void Update() = 0;
-	virtual void Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position) { position; };
-
+	virtual void Render(const glm::vec3& position) {UNREFERENCED_PARAMETER(position);}
 	void SetGameObject(GameObject* gameObject) { m_GameObject = gameObject; };
 	GameObject* GetGameObject() { return m_GameObject; }
 protected:

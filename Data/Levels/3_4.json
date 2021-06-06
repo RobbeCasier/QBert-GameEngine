@@ -1,0 +1,28 @@
+[{
+	"type": "single_repeat",
+	"color": 0,
+	"order": [
+		1,
+		2
+	],
+	"disc": [
+		{
+			"c": 12,
+			"r": 3
+		},
+		{
+			"c": 15,
+			"r": 6
+		},
+		{
+			"c": 17,
+			"r": 8
+		}
+	],
+	"red": true,
+	"green": true,
+	"uw": 2,
+	"ss": 1,
+	"bonus": 3750
+}
+]

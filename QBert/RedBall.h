@@ -27,7 +27,6 @@ public:
 
 	void SetStartLocation(const int& col, const int& row);
 	void SetGrid(std::shared_ptr<Grid> grid) { m_pGrid = grid; }
-	void SetPlayers(const std::vector<std::shared_ptr<Player>>& players);
 
 	void AddObserver(std::shared_ptr<Observer> observer);
 
@@ -48,7 +47,6 @@ private:
 	void Jump(const int& col, const int& row);
 
 	std::shared_ptr<TextureComponent> m_pTextureComponent = nullptr;
-	std::vector<std::shared_ptr<Player>> m_Players;
 	std::shared_ptr<Grid> m_pGrid = nullptr;
 
 	std::unique_ptr<Subject> m_ActorChanged = nullptr;

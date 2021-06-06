@@ -10,6 +10,8 @@ void QbertGameController::Initialize()
 		dae::LevelManager::GetInstance().AddLevel(m_pMainMenu);
 		m_pGame = std::make_shared<MainLevel>();
 		dae::LevelManager::GetInstance().AddLevel(m_pGame);
+		m_pEnd = std::make_shared<ScoreLevel>();
+		dae::LevelManager::GetInstance().AddLevel(m_pEnd);
 }
 
 void QbertGameController::Update()
@@ -37,7 +39,10 @@ void QbertGameController::Update()
 		dae::SceneManager::GetInstance().GetScene("HudScene")->Pause();
 		dae::SceneManager::GetInstance().LoadScene("InGameMenu");
 		break;
+	case QbertGameState::GAMEOVER:
 	case QbertGameState::END:
+		dae::LevelManager::GetInstance().SetActiveLevel("End");
+		dae::SceneManager::GetInstance().LoadScene("EndScene");
 		break;
 	default:
 		break;

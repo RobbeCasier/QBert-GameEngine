@@ -36,7 +36,7 @@ void MainMenuLevel::Initialize()
 	auto textComp = go->AddComponent<TextComponent>();
 	textComp->SetText("QBERT");
 	textComp->SetFont(font);
-	go->SetPosition(80, 20);
+	go->SetPosition(200, 20);
 	m_pMainMenuScene->AddObject(go);
 
 	//fps

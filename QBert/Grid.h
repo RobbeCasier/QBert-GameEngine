@@ -22,7 +22,7 @@ public:
 
 	void SetTopPiramid(const unsigned short& col, const unsigned short& row);
 
-	void ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players);
+	void ConstructPiramid();
 	void ConstructDiscs();
 	void NewPiramid();
 	void NewDiscs();
@@ -55,8 +55,6 @@ private:
 	std::vector<std::shared_ptr<CellComponent>> m_Cells;
 	std::vector<unsigned int> m_DiscCells;
 	std::unique_ptr<Subject> m_ActorChanged;
-
-	std::vector<std::shared_ptr<Player>> m_Players;
 
 	//commands
 	std::vector<std::map<std::string, std::shared_ptr<Command>>> m_Commands;

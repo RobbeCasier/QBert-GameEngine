@@ -16,7 +16,7 @@ class Player :
 {
 public:
     explicit Player() : PlayerComponent{} {};
-    virtual ~Player() = default;
+    virtual ~Player() { --m_ID; }
 
     virtual void Initialize() override;
     virtual void Update() override;
@@ -45,19 +45,23 @@ protected:
     void UpdateDescend();
     void UpdateCollision();
     virtual void ChangeLookDirection(const int& horDir = 0, const int& verDir = 0);
+
     std::shared_ptr<TextureComponent> m_TextureComponent;
-    const unsigned int m_CharacterWith{ 32 };
-    unsigned int m_CharacterHeight{ 32 };
-    CharacterState m_State = CharacterState::descend;
-    int m_CurrentSpriteCol{ 7 };
+    std::shared_ptr<Grid> m_Grid = nullptr;
+
     glm::vec2 m_JumpLocation;
     glm::vec2 m_LiftLocation;
-    std::shared_ptr<Grid> m_Grid = nullptr;
+
+    float m_CurrentFallSpeed{ 0.f };
+    const unsigned int m_CharacterWith{ 32 };
+    unsigned int m_CharacterHeight{ 32 };
+    int m_CurrentSpriteCol{ 7 };
     unsigned int m_CurrentCol = 0;
     unsigned int m_CurrentRow = 0;
-    float m_CurrentFallSpeed{ 0.f };
     const unsigned int m_NrCols{ 8 };
     const unsigned int m_NrRows{ 1 };
+
+    CharacterState m_State = CharacterState::descend;
 private:
     void UpdateLift();
     int m_Health = 3;
@@ -87,7 +91,9 @@ private:
     float m_TimeRestart = 2.5f;
     float m_Timer = 0.f;
 
+    unsigned int m_PlayerID;
     bool m_IsPlayer = false;
 
+    static unsigned int m_ID;
 };
 

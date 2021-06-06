@@ -4,6 +4,7 @@
 #include <InputManager.h>
 #include <SceneManager.h>
 #include <ResourceManager.h>
+#include "PlayerManager.h"
 
 #include <UIComponent.h>
 #include "Spawner.h"
@@ -83,24 +84,24 @@ void MainLevel::Initialize()
 
 	player->AddObserver(livesDisplayP1);
 	player->AddObserver(scoreDisplayP1);
-	std::vector<std::shared_ptr<Player>> players;
-	players.push_back(player);
+
+	PlayerManager::GetInstance().AddPlayer(player);
 	m_pGameScene->AddObject(go);
 
 	int playerIndex = 0;
 	//controller input player 1
-	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(players[playerIndex]), playerIndex);
-	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(players[playerIndex]), playerIndex);
-	input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(players[playerIndex]), playerIndex);
-	input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(players[playerIndex]), playerIndex);
+	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(player), playerIndex);
+	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(player), playerIndex);
+	input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(player), playerIndex);
+	input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(player), playerIndex);
 
 	//keyboard input player 1
-	input.AddInput(KeyboardKeys::W, std::make_unique<JumpTopRight>(players[playerIndex]));
-	input.AddInput(KeyboardKeys::D, std::make_unique<JumpBottomRight>(players[playerIndex]));
-	input.AddInput(KeyboardKeys::S, std::make_unique<JumpBottomLeft>(players[playerIndex]));
-	input.AddInput(KeyboardKeys::A, std::make_unique<JumpTopLeft>(players[playerIndex]));
+	input.AddInput(KeyboardKeys::W, std::make_unique<JumpTopRight>(player));
+	input.AddInput(KeyboardKeys::D, std::make_unique<JumpBottomRight>(player));
+	input.AddInput(KeyboardKeys::S, std::make_unique<JumpBottomLeft>(player));
+	input.AddInput(KeyboardKeys::A, std::make_unique<JumpTopLeft>(player));
 
-	input.AddInput(KeyboardKeys::Esc, std::make_unique<InGameMenu>(players[0]));
+	input.AddInput(KeyboardKeys::Esc, std::make_unique<InGameMenu>(player));
 
 	//player 2
 #pragma region SETUP_PLAYER2
@@ -127,7 +128,8 @@ void MainLevel::Initialize()
 			player->AddObserver(livesDisplayP2);
 			player->AddObserver(scoreDisplayP2);
 			player->SetStartLocation(15, 9);
-			players.push_back(player);
+			
+			PlayerManager::GetInstance().AddPlayer(player);
 			m_pGameScene->AddObject(go);
 
 		int playerIndex = 1;
@@ -145,7 +147,7 @@ void MainLevel::Initialize()
 	}
 #pragma endregion
 
-	m_pGrid->ConstructPiramid(players);
+	m_pGrid->ConstructPiramid();
 	m_pGrid->ConstructDiscs();
 
 
@@ -153,9 +155,9 @@ void MainLevel::Initialize()
 	m_pGameScene->AddObject(go);
 	m_pSpawner = go->AddComponent<Spawner>();
 	m_pSpawner->SetGrid(m_pGrid);
-	m_pSpawner->SetPlayers(players);
 	m_pSpawner->LoadLevelData();
 	std::shared_ptr<PlayerDeath> playerDeath = std::make_shared<PlayerDeath>(m_pSpawner);
+	auto players = PlayerManager::GetInstance().GetPlayers();
 	players[0]->AddObserver(playerDeath);
 	if (gameController.GetQbertGameMode() == GameMode::COOP)
 		players[1]->AddObserver(playerDeath);

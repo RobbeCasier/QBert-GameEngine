@@ -34,7 +34,8 @@ namespace dae
 		Up = SDL_SCANCODE_UP,
 		Down = SDL_SCANCODE_DOWN,
 		Left = SDL_SCANCODE_LEFT,
-		Right = SDL_SCANCODE_RIGHT
+		Right = SDL_SCANCODE_RIGHT,
+		Esc = SDL_SCANCODE_ESCAPE
 	};
 
 

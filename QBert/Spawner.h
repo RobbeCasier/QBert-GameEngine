@@ -18,7 +18,6 @@ public:
 	virtual void Update();
 	void Clear();
 	void SetGrid(std::shared_ptr<Grid> pGrid) { m_pGrid = pGrid; }
-	void SetPlayers(std::vector<std::shared_ptr<Player>> players) { m_Players = players; }
 	void LoadLevelData();
 
 	//coily
@@ -42,7 +41,6 @@ public:
 	//general
 	std::shared_ptr<Scene> m_pScene;
 	std::shared_ptr<Grid> m_pGrid;
-	std::vector<std::shared_ptr<Player>> m_Players;
 	
 	//observers
 	std::shared_ptr<Observer> m_obsKillEnemy;

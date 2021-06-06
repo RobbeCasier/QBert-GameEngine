@@ -1,0 +1,24 @@
+[{
+	"type": "single",
+	"color": 1,
+	"order": [
+		1,
+		0
+	],
+	"disc": [
+		{
+			"c": 4,
+			"r": 7
+		},
+		{
+			"c": 17,
+			"r": 8
+		}
+	],
+	"red": true,
+	"green": false,
+	"uw": 0,
+	"ss": 0,
+	"bonus": 1250
+}
+]

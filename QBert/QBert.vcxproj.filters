@@ -126,6 +126,12 @@
     <ClCompile Include="MainMenuLevel.cpp">
       <Filter>Source Files\Level</Filter>
     </ClCompile>
+    <ClCompile Include="ScoreLevel.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Source Files\Characters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -205,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="MainMenuLevel.h">
       <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreLevel.h">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Header Files\Characters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

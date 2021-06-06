@@ -21,7 +21,6 @@ public:
 	virtual void Initialize() override;
 	virtual void Update() override;
 
-	void AddPlayers(std::vector<std::shared_ptr<Player>> players);
 	const int& GetPlayer();
 
 	void SetPossesed() { m_IsPossesed = true; }
@@ -45,7 +44,6 @@ private:
 	CoilyState m_CState = CoilyState::egg;
 
 	Graph* m_pGraph = nullptr;
-	std::vector<std::shared_ptr<Player>> m_Players;
 
 	std::vector<std::shared_ptr<Command>> m_cmdPlayerDeaths;
 

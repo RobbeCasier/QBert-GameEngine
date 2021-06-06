@@ -3,6 +3,7 @@
 #include "Grid.h"
 #include <GameTime.h>
 #include <GameContext.h>
+#include "PlayerManager.h"
 
 int Ugg_Wrongway::m_CurrentId = 0;
 
@@ -29,6 +30,13 @@ void Ugg_Wrongway::Initialize()
 		m_CurrentDirection = m_WrongwayDirection;
 	}
 	m_pTextureComponent->SetSource(m_CurrentSpriteCol, m_CurrentSpriteRow, m_NrOfCols, m_NrOfRows);
+
+	//set commands
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (auto& player : players)
+	{
+		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
+	}
 }
 
 void Ugg_Wrongway::Update()
@@ -55,15 +63,6 @@ void Ugg_Wrongway::Update()
 		break;
 	}
 	CheckCollision();
-}
-
-void Ugg_Wrongway::SetPlayers(const std::vector<std::shared_ptr<Player>>& players)
-{
-	m_Players= players;
-	for (auto player : m_Players)
-	{
-		m_cmdPlayerDeaths.push_back(std::make_shared<Death>(player));
-	}
 }
 
 void Ugg_Wrongway::SetStartLocation(const int& col, const int& row)
@@ -194,9 +193,10 @@ void Ugg_Wrongway::UpdateDescend()
 
 void Ugg_Wrongway::CheckCollision()
 {
-	for (int i = 0; i < m_Players.size(); ++i)
+	auto players = PlayerManager::GetInstance().GetPlayers();
+	for (int i = 0; i < players.size(); ++i)
 	{
-		auto playerRect = m_Players[i]->GetRect();
+		auto playerRect = players[i]->GetRect();
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();
 		rect.x = transform->GetPosition().x;
