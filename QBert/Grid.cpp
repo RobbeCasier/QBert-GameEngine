@@ -8,7 +8,9 @@
 #include "Ugg_Wrongway.h"
 #include "Slick_Sam.h"
 #include "RedBall.h"
+#include "GreenBall.h"
 #include "EnemyController.h"
+#include "LevelReader.h"
 
 void Grid::Initialize()
 {
@@ -105,19 +107,6 @@ int Grid::GetLiftXDir(const int& col)
 	return -1;
 }
 
-glm::vec2 Grid::GetLiftEndPos()
-{
-	unsigned int realCol;
-	int row = m_TopRow - 2;
-	if (m_TopRow % 2 == 1)
-		realCol = (m_TopCol - 1) / 2;
-	else
-		realCol = m_TopCol / 2;
-
-	int index = realCol + (row * m_NrCols);
-	return m_Cells[index]->GetSpritePos();
-}
-
 int Grid::GetBottomLine() const
 {
 	return m_TopRow + m_NrPiramidRows - 1;
@@ -137,6 +126,7 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 	std::shared_ptr<Ugg_Wrongway> uw = std::dynamic_pointer_cast<Ugg_Wrongway>(actor);
 	std::shared_ptr<Slick_Sam> ss = std::dynamic_pointer_cast<Slick_Sam>(actor);
 	std::shared_ptr<RedBall> rb = std::dynamic_pointer_cast<RedBall>(actor);
+	std::shared_ptr<GreenBall> gb = std::dynamic_pointer_cast<GreenBall>(actor);
 
 	//find player
 	auto it = std::find(m_Players.begin(), m_Players.end(), actor);
@@ -155,23 +145,23 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 		{
 			const int& player = coily->GetPlayer();
 			m_Commands[player].at("BeatCoily")->Execute();
-			CoilyFall coilyFall(coily);
-			coilyFall.Execute();
+			m_ActorChanged->Notify(actor, "FALL_COILY");
 		}
 		else if (uw)
 		{
-			UggAndWrongwayFall uwFall(uw);
-			uwFall.Execute();
+			m_ActorChanged->Notify(actor, "FALL_UW");
 		}
 		else if (ss)
 		{
-			SlickAndSamFall ssFall(ss);
-			ssFall.Execute();
+			m_ActorChanged->Notify(actor, "FALL_SS");
 		}
 		else if (rb)
 		{
-			RedBallFall rbFall(rb);
-			rbFall.Execute();
+			m_ActorChanged->Notify(actor, "FALL_RB");
+		}
+		else if (gb)
+		{
+			m_ActorChanged->Notify(actor, "FALL_GB");
 		}
 		else
 		{
@@ -185,7 +175,7 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 	else if (m_Cells[index]->IsCube())
 	{
 		ColorState colorState;
-		if (coily || uw || rb)
+		if (coily || uw || rb || gb)
 			return;
 		else if (ss)
 			colorState = m_Cells[index]->ChangeColor(true);
@@ -216,7 +206,7 @@ void Grid::CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const
 			return;
 
 		//does player exist
-		if (index >= 0)
+		if (cmdIndex >= 0)
 		{
 			m_Commands[cmdIndex].at("Lift")->Execute();
 		}
@@ -258,6 +248,12 @@ void Grid::CheckCompletion()
 	}
 	if (completed)
 	{
+		//give all players bonus
+		for (const auto& commands : m_Commands)
+		{
+			commands.at("Bonus")->Execute();
+		}
+
 		++m_CurrentRound;
 		m_CurrentRound = m_CurrentRound % (m_MaxRounds+1);
 		if (m_CurrentRound == 0)
@@ -272,7 +268,7 @@ void Grid::CheckCompletion()
 	}
 }
 
-void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players, SideColor color, std::vector<int> colorOrder)
+void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players)
 {
 	//setup player
 	m_Players = players;
@@ -281,6 +277,7 @@ void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players,
 		std::map<std::string, std::shared_ptr<Command>> commands;
 		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("BeatCoily", std::make_unique<BeatCoily>(m_Players[i])));
 		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("RemainingDisc", std::make_unique<RemainingDisc>(m_Players[i])));
+		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Bonus", std::make_unique<Bonus>(m_Players[i])));
 		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Fall", std::make_unique<Fall>(m_Players[i])));
 		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Lift", std::make_unique<Lift>(m_Players[i])));
 		commands.insert(std::pair<std::string, std::shared_ptr<Command>>("Intermediat", std::make_unique<ChangeColorPlayerIntermediat>(m_Players[i])));
@@ -297,6 +294,8 @@ void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players,
 
 	int index = realCol + (m_TopRow * m_NrCols);
 
+	const LevelParameters& lvParam = LevelReader::GetInstance().GetLevelParamters();
+
 	short row, col = 0;
 	for (short r = 0; r < m_NrPiramidRows; r++)
 	{
@@ -310,13 +309,15 @@ void Grid::ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players,
 			if (c == 0 || c == r)
 				isSide = true;
 			index = (col + c) + (row * m_NrCols);
-			m_Cells[index]->SetCube(color, colorOrder, isSide);
+			m_Cells[index]->SetCube(lvParam.sideColor, lvParam.order, isSide);
 		}
 	}
 }
 
-void Grid::ConstructDiscs(SideColor color, std::vector<glm::vec2> pos)
+void Grid::ConstructDiscs()
 {
+	const LevelParameters& lvParam = LevelReader::GetInstance().GetLevelParamters();
+	const std::vector<glm::vec2>& pos = lvParam.discsPositions;
 	int x, y;
 	for (int i = 0; i < pos.size(); i++)
 	{
@@ -330,13 +331,13 @@ void Grid::ConstructDiscs(SideColor color, std::vector<glm::vec2> pos)
 		int index = x + (y * m_NrCols);
 		m_DiscCells.push_back(index);
 
-		m_Cells[index]->SetDisc(color);
+		m_Cells[index]->SetDisc(lvParam.sideColor);
 	}
 	m_pGraph = new Graph();
 	m_pGraph->CreateGraphFromGrid(m_NrCols, m_NrRows, m_Cells);
 }
 
-void Grid::NewPiramid(GameType type, SideColor color, std::vector<int> colorOrder)
+void Grid::NewPiramid()
 {
 	m_NewRound = false;
 
@@ -347,6 +348,8 @@ void Grid::NewPiramid(GameType type, SideColor color, std::vector<int> colorOrde
 		realCol = m_TopCol / 2;
 
 	int index = realCol + (m_TopRow * m_NrCols);
+
+	const LevelParameters& lvParam = LevelReader::GetInstance().GetLevelParamters();
 
 	short row, col = 0;
 	for (short r = 0; r < m_NrPiramidRows; r++)
@@ -362,14 +365,14 @@ void Grid::NewPiramid(GameType type, SideColor color, std::vector<int> colorOrde
 				isSide = true;
 			index = (col + c) + (row * m_NrCols);
 			auto block = m_Cells[index]->GetBlock();
-			block->SetTexture(color);
-			block->SetColorOrder(colorOrder);
-			block->SetGameType(type);
+			block->SetTexture(lvParam.sideColor);
+			block->SetColorOrder(lvParam.order);
+			block->SetGameType(lvParam.gameType);
 		}
 	}
 }
 
-void Grid::NewDiscs(SideColor color, std::vector<glm::vec2> positions)
+void Grid::NewDiscs()
 {
 	//check if there are any left from previous level
 	//and destroy
@@ -390,5 +393,5 @@ void Grid::NewDiscs(SideColor color, std::vector<glm::vec2> positions)
 		m_DiscCells.clear();
 	}
 
-	ConstructDiscs(color, positions);
+	ConstructDiscs();
 }

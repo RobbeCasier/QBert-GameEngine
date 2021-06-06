@@ -23,6 +23,11 @@ void Disc::Update()
 	}
 }
 
+void Disc::Render(const glm::vec3& position)
+{
+	m_TextureComponent->Render(position);
+}
+
 
 void Disc::SetTexture(SideColor color, int width, int height)
 {

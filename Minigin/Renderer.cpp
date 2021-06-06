@@ -41,7 +41,7 @@ void dae::Renderer::Render() const
 	//bool showDemo = true;
 	SDL_RenderClear(m_Renderer);
 
-	SceneManager::GetInstance().Render(m_Window);
+	SceneManager::GetInstance().Render();
 	
 	SDL_RenderPresent(m_Renderer);
 }

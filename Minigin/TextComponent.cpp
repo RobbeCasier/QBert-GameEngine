@@ -4,7 +4,7 @@
 
 void dae::TextComponent::Initialize()
 {
-	m_TransformComponent = std::make_shared<Transform>();
+	m_pTransformComponent = std::make_shared<Transform>();
 }
 
 void dae::TextComponent::Update()
@@ -22,15 +22,16 @@ void dae::TextComponent::Update()
 			throw std::runtime_error(std::string("Create text texture from surface failed: ") + SDL_GetError());
 		}
 		SDL_FreeSurface(surf);
-		m_Texture = std::make_shared<Texture2D>(texture);
+		m_pTexture = std::make_shared<Texture2D>(texture);
 		m_NeedsUpdate = false;
 	}
 }
 
-void dae::TextComponent::Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position)
+void dae::TextComponent::Render(const glm::vec3& position)
 {
-	glm::vec3 worldPos = m_TransformComponent->GetPosition() + position;
-	renderComponent->Render(*m_Texture, worldPos);
+	auto render = GetGameObject()->GetComponent<RenderComponent>();
+	glm::vec3 worldPos = m_pTransformComponent->GetPosition() + position;
+	render->Render(*m_pTexture, worldPos);
 }
 
 // This implementation uses the "dirty flag" pattern
@@ -54,6 +55,6 @@ void TextComponent::SetColor(const SDL_Color& color)
 
 void dae::TextComponent::SetPosition(float x, float y)
 {
-	m_TransformComponent->SetPosition(x, y, 0.f);
+	m_pTransformComponent->SetPosition(x, y, 0.f);
 }
 

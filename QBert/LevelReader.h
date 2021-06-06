@@ -1,27 +1,57 @@
 #pragma once
 #include <glm\glm.hpp>
+#include <Singleton.h>
 
-class LevelReader
+#include <rapidjson\document.h>
+#include <rapidjson\filereadstream.h>
+
+enum class SideColor
+{
+	aqua,
+	orange,
+	grey,
+	greyBlue,
+	black,
+	yellowOrange,
+	yellowBlue,
+	green,
+	blackBlack
+};
+enum class GameType
+{
+	singleColor,
+	doubleColor,
+	RepeatSingleColor
+};
+
+struct LevelParameters
+{
+	std::vector<int> order;
+	std::vector<glm::vec2> discsPositions;
+	int maxUWSpawn;
+	int maxSSSpawn;
+	int bonus;
+	GameType gameType;
+	SideColor sideColor;
+	bool spawnRedBall;
+	bool spawnGreenBall;
+};
+class LevelReader final : public dae::Singleton<LevelReader>
 {
 public:
 	LevelReader() = default;
 
-	void Read(std::string assetFile);
-	int GetStyle() const;
-	int GetColor() const;
-	std::vector<int> GetOrder() const;
-	std::vector<glm::vec2> GetDiscs() const;
+	void Read(const int& level, const int& round);
+	LevelParameters GetLevelParamters() { return m_LevelParameters; }
 private:
-	void ReadLine(std::ifstream& input);
-	bool ReadComment(std::ifstream& input, std::string line);
-	bool ReadType(std::ifstream& input, std::string line);
-	bool ReadColor(std::ifstream& input, std::string line);
-	bool ReadOrder(std::ifstream& input, std::string line);
-	bool ReadDisc(std::ifstream& input, std::string line);
+	void ReadJson(const std::string& path);
+	GameType ReadJsonGameType(const rapidjson::Value& position, const std::string& typeName);
+	std::vector<int> ReadJsonOrder(const rapidjson::Value& position, const std::string& typeName);
+	std::vector<glm::vec2> ReadJsonDiscLocation(const rapidjson::Value& position, const std::string& typeName);
+	int ReadJsonInteger(const rapidjson::Value& position, const std::string& typeName);
+	bool ReadJsonBool(const rapidjson::Value& position, const std::string& typeName);
+	void ReadBin(const std::string& path);
 
-	int m_Style = 0;
-	int m_Color = 0;
-	std::vector<int> m_Order;
-	std::vector<glm::vec2> m_Discs{};
+	LevelParameters m_LevelParameters;
 };
 

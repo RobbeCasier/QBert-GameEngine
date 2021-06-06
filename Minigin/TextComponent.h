@@ -19,7 +19,7 @@ namespace dae
 
 		virtual void Initialize() override;
 		virtual void Update() override;
-		void Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position);
+		void Render(const glm::vec3& position) override;
 
 		void SetText(const std::string& text);
 		void SetFont(const std::shared_ptr<Font>& font);
@@ -30,8 +30,8 @@ namespace dae
 		SDL_Color m_Color = { 255, 255, 255 };
 		std::string m_Text = "";
 		std::shared_ptr<Font> m_Font = nullptr;
-		std::shared_ptr<Transform> m_TransformComponent;
-		std::shared_ptr<Texture2D> m_Texture;
+		std::shared_ptr<Transform> m_pTransformComponent;
+		std::shared_ptr<Texture2D> m_pTexture;
 	};
 }
 

@@ -4,141 +4,134 @@
 #include <fstream>
 #include <sstream>
 #include <regex>
+#include <rapidjson\document.h>
+#include <rapidjson\istreamwrapper.h>
+#include <rapidjson\stringbuffer.h>
 
-void LevelReader::Read(std::string assetFile)
+#define psln(x) std::cout<<#x " = "<<(x)<<std::endl
+
+void LevelReader::Read(const int& level, const int& round)
 {
-	m_Order.clear();
-	m_Discs.clear();
+	m_LevelParameters.order.clear();
+	m_LevelParameters.discsPositions.clear();
+	std::string file = std::to_string(level) + "_" + std::to_string(round);
+#ifdef _DEBUG
+	std::string path = "../Data/Levels/" + file + ".json";
+	ReadJson(path);
+#endif
+#ifdef _RELEASE
+#endif
+
+}
+
+void LevelReader::ReadJson(const std::string& path)
+{
 	std::ifstream input;
-	input.open(assetFile, std::ios::in | std::ios::binary);
-	if (input.is_open())
+	input.open(path, std::ios::in | std::ios::binary);
+	if (!input.is_open())
 	{
-		while (!input.eof())
-			ReadLine(input);
-		
+		std::cout << "Could not open file" << std::endl;
+		return;
 	}
-}
 
-int LevelReader::GetStyle() const
-{
-	return m_Style;
-}
-
-int LevelReader::GetColor() const
-{
-	return m_Color;
-}
-
-std::vector<int> LevelReader::GetOrder() const
-{
-	return m_Order;
-}
-
-std::vector<glm::vec2> LevelReader::GetDiscs() const
-{
-	return m_Discs;
-}
-
-void LevelReader::ReadLine(std::ifstream& input)
-{
-	std::string line;
-	std::getline(input, line, '\n');
-
-	if (line != "")
-		if (!ReadComment(input, line))
-			if (!ReadType(input, line))
-				if (!ReadColor(input, line))
-					if(!ReadOrder(input, line))
-						ReadDisc(input, line);
-
-}
-
-bool LevelReader::ReadComment(std::ifstream& input, std::string line)
-{
-	std::string tempString = line;
-	std::regex regex = std::regex{ "#.*" };
-	if (std::regex_match(tempString, regex))
-		return true;
-	return false;
-}
-
-bool LevelReader::ReadType(std::ifstream& input, std::string line)
-{
-	std::string tempString = line;
-	std::regex regex = std::regex{ "(?:<TYPE>)" };
-	if (std::regex_search(tempString, regex))
+	//read whole file
+	std::string json, line;
+	while (std::getline(input, line))
 	{
-		tempString = tempString.substr(7, 1);
-		m_Style = std::stoi(tempString);
-		return true;
+		json.append(line + "\n");
 	}
-	return false;
+	input.close();
+
+	rapidjson::Document doc;
+	doc.Parse<0>(json.c_str(), json.size());
+	if (doc.HasParseError())
+	{
+		rapidjson::ParseErrorCode code = doc.GetParseError();
+		psln(code);
+	}
+
+	for (rapidjson::Value::ConstValueIterator itr = doc.Begin(); itr != doc.End(); ++itr)
+	{
+		const rapidjson::Value& position = *itr;
+
+		m_LevelParameters.gameType = ReadJsonGameType(position, "type");
+		m_LevelParameters.sideColor = (SideColor)ReadJsonInteger(position, "color");
+		m_LevelParameters.order = ReadJsonOrder(position, "order");
+		m_LevelParameters.discsPositions = ReadJsonDiscLocation(position, "disc");
+		m_LevelParameters.spawnRedBall = ReadJsonBool(position, "red");
+		m_LevelParameters.spawnGreenBall = ReadJsonBool(position, "green");
+		m_LevelParameters.maxUWSpawn = ReadJsonInteger(position, "uw");
+		m_LevelParameters.maxSSSpawn = ReadJsonInteger(position, "ss");
+		m_LevelParameters.bonus = ReadJsonInteger(position, "bonus");
+	}
+	input.close();
+
 }
 
-bool LevelReader::ReadColor(std::ifstream& input, std::string line)
+GameType LevelReader::ReadJsonGameType(const rapidjson::Value& position, const std::string& typeName)
 {
-	std::string tempString = line;
-	std::regex regex = std::regex{ "(?:<COLOR>)" };
-	if (std::regex_search(tempString, regex))
-	{
-		tempString = tempString.substr(8, 1);
-		m_Color = std::stoi(tempString);
-		return true;
-	}
-	return false;
+	const rapidjson::Value& value = position[typeName.c_str()];
+
+	std::string str = value.GetString();
+	if (str._Equal("single"))
+		return GameType::singleColor;
+	else if (str._Equal("double"))
+		return GameType::doubleColor;
+	else if (str._Equal("single_repeat"))
+		return GameType::RepeatSingleColor;
+	return GameType{};
 }
 
-bool LevelReader::ReadOrder(std::ifstream& input, std::string line)
+std::vector<int> LevelReader::ReadJsonOrder(const rapidjson::Value& position, const std::string& typeName)
 {
-	std::string tempString = line;
-	std::regex regex = std::regex{ "(?:<ORDER>)" };
-	int offset = 8;
-	if (std::regex_search(tempString, regex))
+	const rapidjson::Value& value = position[typeName.c_str()];
+
+	std::vector<int> order;
+	for (rapidjson::Value::ConstValueIterator itr = value.Begin(); itr < value.End(); ++itr)
 	{
-		while (offset < tempString.size())
-		{
-			std::string sub;
-			sub = tempString.substr(offset, 1);
-			offset += 2;
-			m_Order.push_back(std::stoi(sub));
-		}
-		return true;
+		const rapidjson::Value& positionArray = *itr;
+
+		order.push_back(itr->GetInt());
 	}
-	return false;
+	return order;
 }
 
-bool LevelReader::ReadDisc(std::ifstream& input, std::string line)
+std::vector<glm::vec2> LevelReader::ReadJsonDiscLocation(const rapidjson::Value& position, const std::string& typeName)
 {
-	std::string tempString = line;
-	std::regex regex = std::regex{ "(?:<DISC>)" };
-	int offset = 7;
-	int count = 0;
-	if (std::regex_search(tempString, regex))
+	const rapidjson::Value& value = position[typeName.c_str()];
+
+	std::vector<glm::vec2> positions;
+	for (rapidjson::Value::ConstValueIterator itr = value.Begin(); itr < value.End(); ++itr)
 	{
-		while (offset < tempString.size())
-		{
-			std::string sub;
-			float x, y;
-			int pos = tempString.find_first_of(',', (size_t)offset);
-			if (pos > tempString.length())
-				break;
+		const rapidjson::Value& positionArray = *itr;
+		int column , row;
 
-			count = pos - offset;
-			sub = tempString.substr(offset, count);
-			offset += count + 1;
-			x = std::stof(sub);
+		//get column
+		column = ReadJsonInteger(positionArray, "c");
 
-			pos = tempString.find_first_of(' ', (size_t)offset);
-			if (pos > tempString.length())
-				pos = tempString.length();
-
-			count = pos - offset;
-			sub = tempString.substr(offset, count);
-			y = std::stof(sub);
-			offset += count +1;
-			m_Discs.push_back(glm::vec2(x,y));
-		}
-		return true;
+		//get row
+		row = ReadJsonInteger(positionArray, "r");
+		positions.push_back({ column, row });
 	}
-	return false;
+	return positions;
+}
+
+int LevelReader::ReadJsonInteger(const rapidjson::Value& position, const std::string& typeName)
+{
+	const rapidjson::Value& value = position[typeName.c_str()];
+
+	int integer = value.GetInt();
+	return integer;
+}
+
+bool LevelReader::ReadJsonBool(const rapidjson::Value& position, const std::string& typeName)
+{
+	const rapidjson::Value& value = position[typeName.c_str()];
+
+	bool boolean = value.GetBool();
+	return boolean;
+}
+
+void LevelReader::ReadBin(const std::string& path)
+{
 }

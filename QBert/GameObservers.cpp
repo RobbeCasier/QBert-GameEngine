@@ -10,7 +10,6 @@ void LivesDisplay::OnNotify(std::shared_ptr<BaseComponent> actor, const std::str
 {
 	if (event == "IS_DEAD")
 	{
-		std::cout << "PlayerDied" << std::endl;
 		m_UI->SetText("LIVES: " + std::to_string(std::dynamic_pointer_cast<Player>(actor)->GetHealth()));
 	}
 }
@@ -74,5 +73,29 @@ void PlayerDeath::OnNotify(std::shared_ptr<BaseComponent> player, const std::str
 	if (event == "CLEAR_ENEMIES")
 	{
 		m_Spawner->Clear();
+	}
+}
+
+void EnemyFall::OnNotify(std::shared_ptr<BaseComponent> enemy, const std::string& event)
+{
+	if (event == "FALL_COILY")
+	{
+		std::dynamic_pointer_cast<Coily>(enemy)->Fall();
+	}
+	else if (event == "FALL_UW")
+	{
+		std::dynamic_pointer_cast<Ugg_Wrongway>(enemy)->Fall();
+	}
+	else if (event == "FALL_SS")
+	{
+		std::dynamic_pointer_cast<Slick_Sam>(enemy)->Fall();
+	}
+	else if (event == "FALL_RB")
+	{
+		std::dynamic_pointer_cast<RedBall>(enemy)->Fall();
+	}
+	else if (event == "FALL_GB")
+	{
+		std::dynamic_pointer_cast<GreenBall>(enemy)->Fall();
 	}
 }

@@ -1,15 +1,8 @@
 #include "pch.h"
 #include "Spawner.h"
 #include <GameTime.h>
-#include "Ugg_Wrongway.h"
-#include "Slick_Sam.h"
-#include "RedBall.h"
-#include "GreenBall.h"
 
-Spawner::Spawner(std::shared_ptr<Scene> pScene, std::shared_ptr<Grid> pGrid, const std::vector<std::shared_ptr<Player>>& players)
-	: m_pScene(pScene)
-	, m_pGrid(pGrid)
-	, m_Players(players)
+Spawner::Spawner()
 {
 }
 
@@ -21,65 +14,21 @@ void Spawner::Initialize()
 
 void Spawner::Update()
 {
-	//check if enemies are marked for deletion
-	DeleteEnemies();
 	UpdateCoilySpawn();
 	UpdateUWSpawn();
 	UpdateSSSpawn();
-	UpdateRBSpawn();
-}
-
-void Spawner::DeleteEnemies()
-{
-	if (m_mdCoily)
-	{
-		m_pScene->RemoveObject(m_pCoily);
-		m_pCoily = nullptr;
-		m_mdCoily = false;
-	}
-	if (m_mdUggsAndWrongs.size() != 0)
-	{
-		for (int id : m_mdUggsAndWrongs)
-		{
-			auto it = m_UggsAndWrongs.find(id);
-			if (it == m_UggsAndWrongs.end())
-				continue;
-			m_pScene->RemoveObject(it->second);
-			m_UggsAndWrongs.erase(it);
-		}
-		m_mdUggsAndWrongs.clear();
-	}
-	if (m_mdSlicksAndSams.size() != 0)
-	{
-		for (int id : m_mdSlicksAndSams)
-		{
-			auto it = m_SlicksAndSams.find(id);
-			if (it == m_SlicksAndSams.end())
-				continue;
-			m_pScene->RemoveObject(it->second);
-			m_SlicksAndSams.erase(it);
-		}
-		m_mdSlicksAndSams.clear();
-	}
-	if (m_mdRedBalls.size() != 0)
-	{
-		for (int id : m_mdRedBalls)
-		{
-			auto it = m_RedBalls.find(id);
-			if (it == m_RedBalls.end())
-				continue;
-			m_pScene->RemoveObject(it->second);
-			m_RedBalls.erase(it);
-		}
-		m_mdRedBalls.clear();
-	}
+	if (m_CanSpawnRedBalls)
+		UpdateRBSpawn();
+	if (m_CanSpawnGreenBall)
+		UpdateGBSpawn();
 }
 
 void Spawner::Clear()
 {
+	auto pScene = GetGameObject()->GetScene();
 	if (m_pCoily)
 	{
-		m_pScene->RemoveObject(m_pCoily);
+		pScene->RemoveObject(m_pCoily);
 		m_pCoily = nullptr;
 	}
 	m_TimerCoily = 0.f;
@@ -87,7 +36,7 @@ void Spawner::Clear()
 
 	for (auto uw : m_UggsAndWrongs)
 	{
-		m_pScene->RemoveObject(uw.second);
+		pScene->RemoveObject(uw.second);
 	}
 	m_UggsAndWrongs.clear();
 	m_SpawnTimeUW = 0.f;
@@ -95,7 +44,7 @@ void Spawner::Clear()
 
 	for (auto ss : m_SlicksAndSams)
 	{
-		m_pScene->RemoveObject(ss.second);
+		pScene->RemoveObject(ss.second);
 	}
 	m_SlicksAndSams.clear();
 	m_SpawnTimeSS = 0.f;
@@ -103,10 +52,24 @@ void Spawner::Clear()
 
 	for (auto rb : m_RedBalls)
 	{
-		m_pScene->RemoveObject(rb.second);
+		pScene->RemoveObject(rb.second);
 	}
 	m_RedBalls.clear();
 	m_TimerRB = 0.f;
+	if (m_GreenBall)
+	{
+		pScene->RemoveObject(m_GreenBall);
+		m_GreenBall = nullptr;
+	}
+}
+
+void Spawner::LoadLevelData()
+{
+	const LevelParameters& lvParams = LevelReader::GetInstance().GetLevelParamters();
+	m_MaxSpawnsUggAndWrongway = lvParams.maxUWSpawn;
+	m_MaxSpawnsSlickAndSam = lvParams.maxSSSpawn;
+	m_CanSpawnRedBalls = lvParams.spawnRedBall;
+	m_CanSpawnGreenBall = lvParams.spawnGreenBall;
 }
 
 void Spawner::UpdateCoilySpawn()
@@ -201,6 +164,7 @@ void Spawner::UpdateGBSpawn()
 
 void Spawner::SpawnCoily()
 {
+	auto pScene = GetGameObject()->GetScene();
 	//choose spawn location
 	int randomIdx = rand() % m_StandardSpawnLocations.size();
 	auto location = m_StandardSpawnLocations[randomIdx];
@@ -272,7 +236,6 @@ void Spawner::SpawnRB()
 	rb->SetStartLocation((int)startLocation.x, (int)startLocation.y);
 	rb->AddObserver(m_obsKillEnemy);
 
-	std::cout << rb->GetID() << std::endl;
 	m_RedBalls.insert(std::pair<int, std::shared_ptr<GameObject>>(rb->GetID(), obj));
 	m_pScene->Add(obj);
 }
@@ -294,25 +257,38 @@ void Spawner::SpawnGB()
 
 void Spawner::KillCoily()
 {
-	m_mdCoily = true;
+	m_pScene->RemoveObject(m_pCoily);
+	m_pCoily = nullptr;
 }
 
 void Spawner::KillUW(std::shared_ptr<BaseComponent> uw)
 {
 	int id = std::dynamic_pointer_cast<Ugg_Wrongway>(uw)->GetID();
-	m_mdUggsAndWrongs.push_back(id);
+	auto it = m_UggsAndWrongs.find(id);
+	if (it == m_UggsAndWrongs.end())
+		return;
+	m_pScene->RemoveObject(it->second);
+	m_UggsAndWrongs.erase(it);
 }
 
 void Spawner::KillSS(std::shared_ptr<BaseComponent> ss)
 {
 	int id = std::dynamic_pointer_cast<Slick_Sam>(ss)->GetID();
-	m_mdSlicksAndSams.push_back(id);
+	auto it = m_SlicksAndSams.find(id);
+	if (it == m_SlicksAndSams.end())
+		return;
+	m_pScene->RemoveObject(it->second);
+	m_SlicksAndSams.erase(it);
 }
 
 void Spawner::KillRB(std::shared_ptr<BaseComponent> rb)
 {
 	auto id = std::dynamic_pointer_cast<RedBall>(rb)->GetID();
-	m_mdRedBalls.push_back(id);
+	auto it = m_RedBalls.find(id);
+	if (it == m_RedBalls.end())
+		return;
+	m_pScene->RemoveObject(it->second);
+	m_RedBalls.erase(it);
 }
 
 void Spawner::KillGB()

@@ -68,3 +68,11 @@ private:
 	std::shared_ptr<Spawner> m_Spawner;
 };
 
+class EnemyFall : public Observer
+{
+public:
+	explicit EnemyFall() = default;
+
+	void OnNotify(std::shared_ptr<BaseComponent> enemy, const std::string& event) override;
+};
+

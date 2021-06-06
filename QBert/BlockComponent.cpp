@@ -10,6 +10,11 @@ void BlockComponent::Initialize()
 	m_TextureComponent = m_GameObject->AddComponent<TextureComponent>();
 }
 
+void BlockComponent::Render(const glm::vec3& position)
+{
+	m_TextureComponent->Render({ 0,0,0 });
+}
+
 void BlockComponent::SetGameType(GameType type)
 {
 	m_Type = type;

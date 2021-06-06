@@ -4,30 +4,55 @@
 
 void dae::SceneManager::Update()
 {
-	m_ActiveScene->RootUpdate();
-}
-
-void dae::SceneManager::Render(SDL_Window* window)
-{
-	m_ActiveScene->RootRender(window);
-}
-
-void dae::SceneManager::AddScene(Scene* scene)
-{
-	m_Scenes.push_back(std::shared_ptr<Scene>(scene));
-	scene->RootInitialize();
-}
-
-void dae::SceneManager::SetActive(const std::string& sceneName)
-{
-	auto it = std::find_if(m_Scenes.begin(), m_Scenes.end(),
-		[sceneName](std::shared_ptr<Scene> scene)
-		{
-			return scene->GetSceneName() == sceneName;
-		}
-	);
-	if (it != m_Scenes.end())
+	for (auto scene : m_Scenes)
 	{
-		m_ActiveScene = *it;
+		scene->Update();
+	}
+}
+
+void dae::SceneManager::Render()
+{
+	for (auto scene : m_Scenes)
+	{
+		scene->Render();
+	}
+}
+
+std::shared_ptr<dae::Scene> dae::SceneManager::CreateScene(const std::string& sceneName)
+{
+	const auto scene = std::shared_ptr<Scene>(new dae::Scene(sceneName));
+	m_Scenes.push_back(scene);
+	return scene;
+}
+
+void dae::SceneManager::LoadScene(const std::string& name)
+{
+	for (auto scene : m_Scenes)
+	{
+		if (scene->GetSceneName()._Equal(name))
+		{
+			m_ActiveScenes.push_back(scene);
+			return;
+		}
+	}
+}
+
+void dae::SceneManager::UnloadScene(const std::string& name)
+{
+	for (int indx = 0; indx < m_ActiveScenes.size(); ++indx)
+	{
+		if (m_ActiveScenes[indx]->GetSceneName()._Equal(name))
+		{
+			m_ActiveScenes.erase(m_ActiveScenes.begin() + indx);
+			return;
+		}
+	}
+	for (int indx = 0; indx < m_Scenes.size(); ++indx)
+	{
+		if (m_Scenes[indx]->GetSceneName()._Equal(name))
+		{
+			m_Scenes.erase(m_Scenes.begin() + indx);
+			return;
+		}
 	}
 }

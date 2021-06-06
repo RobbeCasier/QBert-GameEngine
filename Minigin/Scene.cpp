@@ -10,9 +10,10 @@ Scene::Scene(const std::string& name) : m_Name(name) {  }
 
 Scene::~Scene() = default;
 
-void Scene::Add(const std::shared_ptr<GameObject>& object)
+void Scene::Add(std::shared_ptr<GameObject> object)
 {
 	m_Objects.push_back(object);
+	m_Objects[m_Objects.size() - 1]->SetScene(shared_from_this());
 }
 
 void dae::Scene::RemoveObject(std::shared_ptr<GameObject> object)
@@ -33,28 +34,20 @@ void dae::Scene::Remove()
 	}
 }
 
-void dae::Scene::RootInitialize()
+void dae::Scene::Update()
 {
-	Initialize();
-}
-
-void dae::Scene::RootUpdate()
-{
-	Remove();
 	for (auto& object : m_Objects)
 	{
 		object->Update();
 	}
-	Update();
+	Remove();
 }
 
-void dae::Scene::RootRender(SDL_Window* window) const
+void dae::Scene::Render() const
 {
-	UNREFERENCED_PARAMETER(window);
 	for (const auto& object : m_Objects)
 	{
 		object->Render();
 	}
-	Render(window);
 }
 

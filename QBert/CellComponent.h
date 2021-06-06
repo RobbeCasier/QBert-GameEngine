@@ -21,6 +21,7 @@ public:
 
 	virtual void Initialize() override;
 	virtual void Update() override {};
+	virtual void Render(const glm::vec3& position);
 
 	bool IsCube() const;
 	bool IsDisc() const;

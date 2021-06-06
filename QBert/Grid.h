@@ -22,15 +22,14 @@ public:
 
 	void SetTopPiramid(const unsigned short& col, const unsigned short& row);
 
-	void ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players, SideColor color, std::vector<int> colorOrder);
-	void ConstructDiscs(SideColor color, std::vector<glm::vec2> pos);
-	void NewPiramid(GameType type, SideColor color, std::vector<int> colorOrder);
-	void NewDiscs(SideColor color, std::vector<glm::vec2> positions);
+	void ConstructPiramid(const std::vector<std::shared_ptr<Player>>& players);
+	void ConstructDiscs();
+	void NewPiramid();
+	void NewDiscs();
 	glm::vec2 GetPos(const unsigned short& col, const unsigned short& row) const;
 	glm::vec2 GetColumnRow(const unsigned int& index) const;
 	int GetIndex(const unsigned int& col, const unsigned int& row) const;
 	int GetLiftXDir(const int& col);
-	glm::vec2 GetLiftEndPos();
 	int GetBottomLine() const;
 
 	void CheckGrid(std::shared_ptr<BaseComponent> actor, const int& col, const int& row);

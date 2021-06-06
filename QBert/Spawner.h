@@ -1,19 +1,25 @@
 #pragma once
 #include "Coily.h"
+#include "Ugg_Wrongway.h"
+#include "Slick_Sam.h"
+#include "RedBall.h"
+#include "GreenBall.h"
 #include <Scene.h>
 #include "GameObservers.h"
 
-class Spawner : public std::enable_shared_from_this<Spawner>
+class Spawner : public BaseComponent, public std::enable_shared_from_this<Spawner>
 {
 public:
-	Spawner(std::shared_ptr<Scene> pScene, std::shared_ptr<Grid> pGrid, const std::vector<std::shared_ptr<Player>>& players);
-	~Spawner() = default;
+	Spawner();
+	virtual ~Spawner() = default;
 
 	//general
 	void Initialize();
-	void Update();
-	void DeleteEnemies();
+	virtual void Update();
 	void Clear();
+	void SetGrid(std::shared_ptr<Grid> pGrid) { m_pGrid = pGrid; }
+	void SetPlayers(std::vector<std::shared_ptr<Player>> players) { m_Players = players; }
+	void LoadLevelData();
 
 	//coily
 	void KillCoily();
@@ -73,7 +79,6 @@ public:
 	//Ugg & Wrongway
 	std::vector<glm::vec2> m_UWSpawnLocations = { {15,9}, {3,9} }; //15,9 is the location for ugg the other for wrongway
 	std::map<int, std::shared_ptr<GameObject>> m_UggsAndWrongs;
-	std::vector<int> m_mdUggsAndWrongs;
 	unsigned int m_MaxSpawnsUggAndWrongway = 0;
 	int m_MinSpawnTimeUW = 3;
 	int m_MaxSpawnTimeUW = 9;
@@ -82,7 +87,6 @@ public:
 
 	//Slick & Sam
 	std::map<int, std::shared_ptr<GameObject>> m_SlicksAndSams;
-	std::vector<int> m_mdSlicksAndSams;
 	unsigned int m_MaxSpawnsSlickAndSam = 0;
 	int m_MinSpawnTimeSS = 3;
 	int m_MaxSpawnTimeSS = 24;
@@ -91,9 +95,9 @@ public:
 
 	//Red Ball
 	std::map<int, std::shared_ptr<GameObject>> m_RedBalls;
-	std::vector<int> m_mdRedBalls;
 	const float m_SpawnTimeRB = 4.f;
 	float m_TimerRB = 0.f;
+	bool m_CanSpawnRedBalls = false;
 
 	//Green Ball
 	std::shared_ptr<GameObject> m_GreenBall;
@@ -101,7 +105,6 @@ public:
 	int m_MaxSpawnTimeGB = 30;
 	float m_SpawnTimeGB = 0.f;
 	float m_TimerGB = 0.f;
-
-	bool m_mdCoily = false;
+	bool m_CanSpawnGreenBall = false;
 };
 

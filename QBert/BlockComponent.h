@@ -3,26 +3,9 @@
 #include <TextureComponent.h>
 #include <PlayerComponent.h>
 #include <Commands.h>
+#include "LevelReader.h"
 
 class Grid;
-enum class SideColor
-{
-    aqua,
-    orange,
-    grey,
-    greyBlue,
-    black,
-    yellowOrange,
-    yellowBlue,
-    green,
-    blackBlack
-};
-enum class GameType
-{
-    singleColor,
-    doubleColor,
-    RepeatSingleColor
-};
 
 enum class ColorState
 {
@@ -39,6 +22,7 @@ public:
 
     virtual void Initialize() override;
     virtual void Update() override {};
+    virtual void Render(const glm::vec3& position) override;
 
     void SetGameType(GameType type);
     void SetIsSide(bool isSide);

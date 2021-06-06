@@ -11,7 +11,7 @@ public:
 
 	virtual void Initialize() override;
 	virtual void Update() override;
-
+	virtual void Render(const glm::vec3& position) override;
 
 	void SetTexture(SideColor color, int width = 0, int height = 0);
 	void SetTextureDestination(glm::vec3 dst);

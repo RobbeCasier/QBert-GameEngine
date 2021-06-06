@@ -12,7 +12,7 @@ void GreenBall::Initialize()
 	++m_CurrentId;
 	//setup texture
 	m_pTextureComponent = m_GameObject->AddComponent<TextureComponent>();
-	m_pTextureComponent->SetTexture("Red_Ball.png");
+	m_pTextureComponent->SetTexture("Green_Ball.png");
 	m_pTextureComponent->SetSize(m_CharacterWidth, m_CharacterHeight);
 
 	//setup texture source
@@ -194,6 +194,7 @@ void GreenBall::CheckCollision()
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{
 			GameContext::GetInstance().GreenBallMode();
+			m_ActorChanged->Notify(shared_from_this(), "KILL_GB");
 			return;
 		}
 	}

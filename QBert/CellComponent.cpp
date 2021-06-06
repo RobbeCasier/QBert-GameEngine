@@ -61,6 +61,12 @@ void CellComponent::Initialize()
 {
 }
 
+void CellComponent::Render(const glm::vec3& position)
+{
+	if (m_Component)
+		m_Component->Render(m_TransformComponent->GetPosition());
+}
+
 bool CellComponent::IsCube() const
 {
 	return m_isCube;

@@ -3,6 +3,8 @@
 #include "Player.h"
 #include <ServiceLocator.h>
 #include <GameContext.h>
+#include "LevelReader.h"
+#include "QbertGameController.h"
 
 class JumpBottomLeft final : public Command
 {
@@ -38,6 +40,20 @@ public:
 	void Execute() override
 	{
 		std::dynamic_pointer_cast<Player>(m_Actor)->Jump(1, -1);
+	}
+};
+
+class InGameMenu final : public Command
+{
+public:
+	explicit InGameMenu(std::shared_ptr<PlayerComponent> actor) : Command(actor) {}
+	void Execute() override
+	{
+		QbertGameController& qgc = (QbertGameController&)ServiceLocator::GetGameController();
+		if (qgc.GetQbertState() == QbertGameState::LEVEL)
+			qgc.SetQbertState(QbertGameState::PAUSE);
+		else if (qgc.GetQbertState() == QbertGameState::PAUSE)
+			qgc.SetQbertState(QbertGameState::LEVEL);
 	}
 };
 
@@ -122,5 +138,15 @@ public:
 	void Execute() override
 	{
 		std::dynamic_pointer_cast<Player>(m_Actor)->AddScore(300);
+	}
+};
+
+class Bonus final :public Command
+{
+public:
+	explicit Bonus(std::shared_ptr<PlayerComponent> actor) : Command(actor){}
+	void Execute() override
+	{
+		std::dynamic_pointer_cast<Player>(m_Actor)->AddScore(LevelReader::GetInstance().GetLevelParamters().bonus);
 	}
 };

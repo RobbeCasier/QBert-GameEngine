@@ -122,7 +122,7 @@ void Player::UpdateLift()
 	std::shared_ptr<Transform> transformComp = m_GameObject->GetComponent<Transform>();
 	glm::vec3 curPos3 = transformComp->GetPosition();
 	glm::vec2 curPos2{ curPos3.x, curPos3.y };
-	curPos2 += m_LiftDirection * (m_LiftSpeed * Time::GetInstance().GetElapsedTime());
+	curPos2 += m_LiftDirection * (m_LiftSpeed * m_LiftDistance * Time::GetInstance().GetElapsedTime());
 
 	if (m_LiftDirection.x > 0.f)
 	{
@@ -227,13 +227,18 @@ void Player::Fall()
 void Player::Lift()
 {
 	m_State = CharacterState::elevate;
-	m_LiftLocation = m_Grid->GetLiftEndPos();
+
+	int rowOffset = 2;
+	m_LiftLocation = m_Grid->GetPos(m_StartCol, m_StartRow - rowOffset);
 	std::shared_ptr<Transform> transformComp = m_GameObject->GetComponent<Transform>();
 	glm::vec3 curPos3 = transformComp->GetPosition();
 	glm::vec2 curPos2{ curPos3.x, curPos3.y };
 
 	m_LiftDirection = m_LiftLocation - curPos2;
 	m_LiftDirection = glm::normalize(m_LiftDirection);
+
+	//distance is how many blocks from eachother
+	m_LiftDistance = m_CurrentRow - (m_StartRow - rowOffset);
 }
 
 void Player::AddScore(const int& score)

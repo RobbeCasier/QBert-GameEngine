@@ -43,6 +43,21 @@
     <Filter Include="Header Files\Enemies">
       <UniqueIdentifier>{bc331f13-45f0-4c33-b41b-ddb84bc17897}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene\LevelScene">
+      <UniqueIdentifier>{a7007b6b-fca5-4ef0-bc37-f0f95097be9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene\MainMenu">
+      <UniqueIdentifier>{354cddf4-cacc-4900-aec2-155bd7569ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes\MainMenu">
+      <UniqueIdentifier>{cff9c6c3-0757-45c5-b1f0-112b8d72725a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level">
+      <UniqueIdentifier>{6a299063-8bf3-45c2-b54c-3a7e1b6c3db7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Level">
+      <UniqueIdentifier>{49c58690-ebca-42dd-931d-029d1ac1a333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -50,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainScene.cpp">
-      <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Source Files\Grid</Filter>
@@ -70,9 +82,6 @@
       <Filter>Source Files\Reader</Filter>
     </ClCompile>
     <ClCompile Include="MainGame.cpp">
-      <Filter>Source Files\Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelScene.cpp">
       <Filter>Source Files\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -102,13 +111,25 @@
     <ClCompile Include="GreenBall.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenuSDLButtons.cpp">
+      <Filter>Source Files\Scenes\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="MainLevel.cpp">
+      <Filter>Source Files\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="QbertGameController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenuLevel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameMenuUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainScene.h">
-      <Filter>Source Files\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Grid.h">
       <Filter>Header Files\Grid</Filter>
@@ -131,14 +152,8 @@
     <ClInclude Include="PlayerController.h">
       <Filter>Header Files\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="LevelScene.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="GridController.h">
       <Filter>Header Files\Grid</Filter>
-    </ClInclude>
-    <ClInclude Include="MainGame.h">
-      <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Coily.h">
       <Filter>Header Files\Enemies</Filter>
@@ -172,6 +187,24 @@
     </ClInclude>
     <ClInclude Include="GreenBall.h">
       <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuSDLButtons.h">
+      <Filter>Header Files\Scene\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="MainGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainLevel.h">
+      <Filter>Header Files\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="QbertGameController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenuLevel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameMenuUI.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -66,7 +66,7 @@ private:
 
     const int m_NrOfJumpSounds = 4;
 
-    const float m_LiftSpeed{ 200.f };
+    const float m_LiftSpeed{ 25.f };
     const float m_JumpSpeed{ 150.f };
 
     unsigned int m_StartCol = 0;
@@ -79,6 +79,7 @@ private:
 
 
     float m_Size = 0.f;
+    float m_LiftDistance = 0;
 
     glm::vec2 m_JumpDirection;
     glm::vec2 m_LiftDirection;

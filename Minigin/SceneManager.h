@@ -8,15 +8,16 @@ namespace dae
 	class SceneManager final : public Singleton<SceneManager>
 	{
 	public:
-		void AddScene(Scene* scene);
-		void SetActive(const std::string& sceneName);
+		std::shared_ptr<Scene> CreateScene(const std::string& name);
+		void LoadScene(const std::string& name);
+		void UnloadScene(const std::string& name);
 
 		void Update();
-		void Render(SDL_Window* window);
+		void Render();
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::shared_ptr<Scene>> m_Scenes;
-		std::shared_ptr<Scene> m_ActiveScene;
+		std::vector<std::shared_ptr<Scene>> m_ActiveScenes;
 	};
 }

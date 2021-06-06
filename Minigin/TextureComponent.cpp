@@ -7,32 +7,34 @@
 
 void TextureComponent::Initialize()
 {
-	m_TransformComponent = std::make_shared<Transform>();
+	m_pTransformComponent = std::make_shared<Transform>();
 }
 
-void TextureComponent::Render(std::shared_ptr<RenderComponent> renderComponent, const glm::vec3& position)
+void TextureComponent::Render(const glm::vec3& position)
 {
-	glm::vec3 worldPos = m_TransformComponent->GetPosition() + position;
+	auto transform = GetGameObject()->GetComponent<Transform>();
+	auto render = GetGameObject()->GetComponent<RenderComponent>();
+	glm::vec3 worldPos = m_pTransformComponent->GetPosition() + position;
 	if (m_HasSourceRect)
-		renderComponent->Render(*m_Texture, worldPos, m_Width, m_Height, glm::vec2{ static_cast<float>(m_SrcRect.x), static_cast<float>(m_SrcRect.y) }, static_cast<float>(m_SrcRect.w), static_cast<float>(m_SrcRect.h));
+		render->Render(*m_pTexture, worldPos, m_Width, m_Height, glm::vec2{ static_cast<float>(m_SrcRect.x), static_cast<float>(m_SrcRect.y) }, static_cast<float>(m_SrcRect.w), static_cast<float>(m_SrcRect.h));
 	else
-		renderComponent->Render(*m_Texture, worldPos);
+		render->Render(*m_pTexture, worldPos);
 }
 
 void TextureComponent::SetTexture(const std::string& filename)
 {
-	m_Texture = ResourceManager::GetInstance().LoadTexture(filename);
+	m_pTexture = ResourceManager::GetInstance().LoadTexture(filename);
 }
 
 void TextureComponent::SetPosition(float x, float y)
 {
-	m_TransformComponent->SetPosition(x, y, 0.f);
+	m_pTransformComponent->SetPosition(x, y, 0.f);
 }
 
 void TextureComponent::SetSource(const int& col, const int& row, const int& nrCol, const int& nrRow)
 {
 	int w, h;
-	SDL_QueryTexture(m_Texture->GetSDLTexture(), nullptr, nullptr, &w, &h);
+	SDL_QueryTexture(m_pTexture->GetSDLTexture(), nullptr, nullptr, &w, &h);
 	//bottomLeft
 	m_SrcRect.x = w / nrCol * col;
 	m_SrcRect.y = (h / nrRow * (row-1)) + h / nrRow;
@@ -50,13 +52,13 @@ void TextureComponent::SetSize(const int& width, const int& height)
 int TextureComponent::GetWidth()
 {
 	int x, y;
-	SDL_QueryTexture(m_Texture->GetSDLTexture(), 0, 0, &x, &y);
+	SDL_QueryTexture(m_pTexture->GetSDLTexture(), 0, 0, &x, &y);
 	return x;
 }
 
 int TextureComponent::GetHeight()
 {
 	int x, y;
-	SDL_QueryTexture(m_Texture->GetSDLTexture(), 0, 0, &x, &y);
+	SDL_QueryTexture(m_pTexture->GetSDLTexture(), 0, 0, &x, &y);
 	return y;
 }

@@ -7,12 +7,14 @@
 #include <Scene.h>
 #include <FPS.h>
 #include <UIComponent.h>
-#include "MainScene.h"
+#include "MainMenuSDLButtons.h"
+#include "QbertGameController.h"
 
 void MainGame::LoadGame() const
 {
-	dae::SceneManager::GetInstance().AddScene(new MainScene("MainScreen"));
-	dae::SceneManager::GetInstance().SetActive("MainScreen");
+	ServiceLocator::RegisterGameController(std::make_shared<QbertGameController>());
+	ServiceLocator::GetGameController().Initialize();
+
 	//load in sounds
 	ServiceLocator::RegisterSoundSystem(std::make_shared<SDL_Sound_System>(SDL_Sound_System()));
 	auto& audio = ServiceLocator::GetSoundSystem();
