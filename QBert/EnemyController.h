@@ -2,6 +2,53 @@
 #include <Commands.h>
 #include "Coily.h"
 #include "Ugg_Wrongway.h"
+#include "Slick_Sam.h"
+#include "RedBall.h"
+
+class CoilyJumpBottomLeft final : public Command
+{
+public:
+	explicit CoilyJumpBottomLeft(std::shared_ptr<Player> actor) : Command(actor) {}
+	void Execute() override
+	{
+		auto actor = std::dynamic_pointer_cast<Coily>(m_Actor);
+		if (actor->IsPossesed())
+			actor->Jump(-1, 1);
+	}
+};
+class CoilyJumpBottomRight final : public Command
+{
+public:
+	explicit CoilyJumpBottomRight(std::shared_ptr<Player> actor) : Command(actor) {}
+	void Execute() override
+	{
+		auto actor = std::dynamic_pointer_cast<Coily>(m_Actor);
+		if (actor->IsPossesed())
+			actor->Jump(1, 1);
+	}
+};
+class CoilyJumpTopLeft final : public Command
+{
+public:
+	explicit CoilyJumpTopLeft(std::shared_ptr<Player> actor) : Command(actor) {}
+	void Execute() override
+	{
+		auto actor = std::dynamic_pointer_cast<Coily>(m_Actor);
+		if (actor->IsPossesed())
+			actor->Jump(-1, -1);
+	}
+};
+class CoilyJumpTopRight final : public Command
+{
+public:
+	explicit CoilyJumpTopRight(std::shared_ptr<Coily> actor) : Command(actor) {}
+	void Execute() override
+	{
+		auto actor = std::dynamic_pointer_cast<Coily>(m_Actor);
+		if (actor->IsPossesed())
+			actor->Jump(1, -1);
+	}
+};
 
 class CoilyFall final : public Command
 {

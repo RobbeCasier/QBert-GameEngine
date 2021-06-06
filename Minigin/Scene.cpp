@@ -10,15 +10,24 @@ Scene::Scene(const std::string& name) : m_Name(name) {  }
 
 Scene::~Scene() = default;
 
-void Scene::Add(std::shared_ptr<GameObject> object)
+void Scene::AddObject(std::shared_ptr<GameObject> object)
 {
-	m_Objects.push_back(object);
-	m_Objects[m_Objects.size() - 1]->SetScene(shared_from_this());
+	object->SetScene(shared_from_this());
+	m_ObjectsToAdd.push_back(object);
 }
 
 void dae::Scene::RemoveObject(std::shared_ptr<GameObject> object)
 {
 	m_ObjectsToDelete.push_back(object);
+}
+
+void dae::Scene::Add()
+{
+	for (auto object : m_ObjectsToAdd)
+	{
+		m_Objects.push_back(object);
+	}
+	m_ObjectsToAdd.clear();
 }
 
 void dae::Scene::Remove()
@@ -32,10 +41,12 @@ void dae::Scene::Remove()
 			object.reset();
 		}
 	}
+	m_ObjectsToDelete.clear();
 }
 
 void dae::Scene::Update()
 {
+	Add();
 	for (auto& object : m_Objects)
 	{
 		object->Update();

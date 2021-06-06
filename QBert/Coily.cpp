@@ -3,6 +3,8 @@
 #include "Grid.h"
 #include <GameTime.h>
 #include <GameContext.h>
+#include <InputManager.h>
+#include "EnemyController.h"
 
 void Coily::Initialize()
 {
@@ -23,9 +25,11 @@ void Coily::Update()
 
 	if (m_State == CharacterState::idle)
 	{
+		//time to stay on the bottom line
 		m_Timer += Time::GetInstance().GetElapsedTime();
 		if (m_Grid->GetBottomLine() == m_CurrentRow && m_CState != CoilyState::snake)
 		{
+			//if long enough hatch
 			if (m_Timer >= m_TimeTillHatch)
 			{
 				m_CState = CoilyState::snake;
@@ -37,14 +41,32 @@ void Coily::Update()
 				pos.y -= m_CharacterHeight / 2;
 				this->SetPosition(pos);
 				m_Timer = m_Timer - m_TimeTillHatch;
+
+				if (m_IsPossesed)
+				{
+					auto& input = InputManager::GetInstance();
+					//controller input player 2
+					std::shared_ptr<Coily> myShare = std::dynamic_pointer_cast<Coily>(shared_from_this());
+					input.AddInput(ControllerButton::ButtonUP, std::make_unique<CoilyJumpTopRight>(myShare), 1);
+					input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<CoilyJumpBottomRight>(myShare), 1);
+					input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<CoilyJumpBottomLeft>(myShare), 1);
+					input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<CoilyJumpTopLeft>(myShare), 1);
+
+					//keyboard input player 2
+					input.AddInput(KeyboardKeys::Up, std::make_unique<CoilyJumpTopRight>(myShare));
+					input.AddInput(KeyboardKeys::Right, std::make_unique<CoilyJumpBottomRight>(myShare));
+					input.AddInput(KeyboardKeys::Down, std::make_unique<CoilyJumpBottomLeft>(myShare));
+					input.AddInput(KeyboardKeys::Left, std::make_unique<CoilyJumpTopLeft>(myShare));
+				}
 			}
 		}
+		//time for next jump
 		else if (m_Timer >= m_TimeTilNextJump)
 		{
 			m_Timer = m_Timer - m_TimeTilNextJump;
 			if (m_CState == CoilyState::egg)
 				GetRandomJumpLocation();
-			else
+			else if (!m_IsPossesed)
 			{
 				if (m_pGraph == nullptr)
 					m_pGraph = m_Grid->GetGraph();
@@ -61,7 +83,9 @@ void Coily::Update()
 				int col = columnRow[0] - m_CurrentCol;
 				int row = columnRow[1] - m_CurrentRow;
 
-				Jump(col, row);
+				//check if coily doesn't jump to start position
+				if (col != 0 && row != 0)
+					Jump(col, row);
 
 			}
 
@@ -82,6 +106,8 @@ void Coily::AddPlayers(std::vector<std::shared_ptr<Player>> players)
 
 const int& Coily::GetPlayer()
 {
+	if (m_Players.size() == 1)
+		return 0;
 	return m_pGraph->GetRouteIndex();
 }
 
@@ -138,6 +164,7 @@ void Coily::CheckCollision()
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{
 			m_cmdPlayerDeaths[i]->Execute();
+			m_ActorChanged->Notify(shared_from_this(), "KILL_COILY");
 		}
 	}
 }

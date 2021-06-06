@@ -9,6 +9,8 @@ namespace dae
 	{
 	public:
 		std::shared_ptr<Scene> CreateScene(const std::string& name);
+		std::shared_ptr<Scene> GetScene(const std::string& name);
+		void RemoveScene(const std::string& name);
 		void LoadScene(const std::string& name);
 		void UnloadScene(const std::string& name);
 

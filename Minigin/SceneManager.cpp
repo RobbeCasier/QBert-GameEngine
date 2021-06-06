@@ -6,13 +6,14 @@ void dae::SceneManager::Update()
 {
 	for (auto scene : m_Scenes)
 	{
-		scene->Update();
+		if (scene->IsActive())
+			scene->Update();
 	}
 }
 
 void dae::SceneManager::Render()
 {
-	for (auto scene : m_Scenes)
+	for (auto scene : m_ActiveScenes)
 	{
 		scene->Render();
 	}
@@ -25,12 +26,43 @@ std::shared_ptr<dae::Scene> dae::SceneManager::CreateScene(const std::string& sc
 	return scene;
 }
 
+std::shared_ptr<dae::Scene> dae::SceneManager::GetScene(const std::string& name)
+{
+	for (auto scene : m_Scenes)
+	{
+		if (scene->GetSceneName()._Equal(name))
+			return scene;
+	}
+	return nullptr;
+}
+
+void dae::SceneManager::RemoveScene(const std::string& name)
+{
+	for (int indx = 0; indx < m_Scenes.size(); ++indx)
+	{
+		if (m_Scenes[indx]->GetSceneName()._Equal(name))
+		{
+			m_Scenes.erase(m_Scenes.begin() + indx);
+			break;
+		}
+	}
+	for (int indx = 0; indx < m_ActiveScenes.size(); ++indx)
+	{
+		if (m_ActiveScenes[indx]->GetSceneName()._Equal(name))
+		{
+			m_ActiveScenes.erase(m_ActiveScenes.begin() + indx);
+			return;
+		}
+	}
+}
+
 void dae::SceneManager::LoadScene(const std::string& name)
 {
 	for (auto scene : m_Scenes)
 	{
 		if (scene->GetSceneName()._Equal(name))
 		{
+			scene->UnPause();
 			m_ActiveScenes.push_back(scene);
 			return;
 		}
@@ -44,14 +76,6 @@ void dae::SceneManager::UnloadScene(const std::string& name)
 		if (m_ActiveScenes[indx]->GetSceneName()._Equal(name))
 		{
 			m_ActiveScenes.erase(m_ActiveScenes.begin() + indx);
-			return;
-		}
-	}
-	for (int indx = 0; indx < m_Scenes.size(); ++indx)
-	{
-		if (m_Scenes[indx]->GetSceneName()._Equal(name))
-		{
-			m_Scenes.erase(m_Scenes.begin() + indx);
 			return;
 		}
 	}

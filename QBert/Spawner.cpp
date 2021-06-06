@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Spawner.h"
 #include <GameTime.h>
+#include <ServiceLocator.h>
+#include "QbertGameController.h"
 
 Spawner::Spawner()
 {
@@ -14,6 +16,12 @@ void Spawner::Initialize()
 
 void Spawner::Update()
 {
+	if (!m_pScene)
+		m_pScene = GetGameObject()->GetScene();
+
+	if (GameContext::GetInstance().GetGameState() != GameState::PLAY)
+		return;
+
 	UpdateCoilySpawn();
 	UpdateUWSpawn();
 	UpdateSSSpawn();
@@ -175,7 +183,9 @@ void Spawner::SpawnCoily()
 	coilyComp->AddPlayers(m_Players);
 	coilyComp->SetStartLocation((int)location.x, (int)location.y);
 	coilyComp->AddObserver(m_obsKillEnemy);
-	m_pScene->Add(m_pCoily);
+	if (((QbertGameController&)ServiceLocator::GetGameController()).GetQbertGameMode() == GameMode::VS)
+		coilyComp->SetPossesed();
+	m_pScene->AddObject(m_pCoily);
 }
 
 
@@ -196,7 +206,7 @@ void Spawner::SpawnUW()
 	uw->AddObserver(m_obsKillEnemy);
 
 	m_UggsAndWrongs.insert(std::pair<int, std::shared_ptr<GameObject>>(uw->GetID(),obj));
-	m_pScene->Add(obj);
+	m_pScene->AddObject(obj);
 }
 
 
@@ -217,7 +227,7 @@ void Spawner::SpawnSS()
 	ss->AddObserver(m_obsKillEnemy);
 
 	m_SlicksAndSams.insert(std::pair<int, std::shared_ptr<GameObject>>(ss->GetID(), obj));
-	m_pScene->Add(obj);
+	m_pScene->AddObject(obj);
 }
 
 
@@ -237,7 +247,7 @@ void Spawner::SpawnRB()
 	rb->AddObserver(m_obsKillEnemy);
 
 	m_RedBalls.insert(std::pair<int, std::shared_ptr<GameObject>>(rb->GetID(), obj));
-	m_pScene->Add(obj);
+	m_pScene->AddObject(obj);
 }
 
 void Spawner::SpawnGB()
@@ -252,7 +262,7 @@ void Spawner::SpawnGB()
 	gb->SetPlayers(m_Players);
 	gb->SetStartLocation((int)location.x, (int)location.y);
 	gb->AddObserver(m_obsKillEnemy);
-	m_pScene->Add(m_GreenBall);
+	m_pScene->AddObject(m_GreenBall);
 }
 
 void Spawner::KillCoily()

@@ -19,12 +19,32 @@ void dae::InputManager::AddInput( ControllerButton inputKey, std::unique_ptr<Com
 	UNREFERENCED_PARAMETER(inputKey);
 	UNREFERENCED_PARAMETER(player);
 	if (m_Controllers.size() > player)
-		m_Controllers[player]->controllerCommandMap.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)inputKey, std::move(command)));
+	{
+		auto itr = m_Controllers[player]->controllerCommandMap.find((int)inputKey);
+		if (itr == m_Controllers[player]->controllerCommandMap.end())
+			m_Controllers[player]->controllerCommandMap.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)inputKey, std::move(command)));
+		else
+			m_Controllers[player]->controllerCommandMap.at((int)inputKey) = std::move(command);
+	}
 }
 
 void dae::InputManager::AddInput(KeyboardKeys key, std::unique_ptr<Command> command)
 {
-	m_KeyboardCommands.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)key, std::move(command)));
+	auto itr = m_KeyboardCommands.find((int)key);
+	if (itr == m_KeyboardCommands.end())
+		m_KeyboardCommands.insert(std::pair<unsigned int, std::unique_ptr<Command>>((unsigned int)key, std::move(command)));
+	else
+		m_KeyboardCommands.at((int)key) = std::move(command);
+}
+
+void dae::InputManager::RemoveInput(ControllerButton button, const unsigned int& player)
+{
+	m_Controllers[player]->controllerCommandMap.erase((unsigned int)button);
+}
+
+void dae::InputManager::RemoveInput(KeyboardKeys key)
+{
+	m_KeyboardCommands.erase((unsigned int)key);
 }
 
 bool dae::InputManager::ProcessInput()

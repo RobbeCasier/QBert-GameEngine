@@ -24,6 +24,9 @@ public:
 	void AddPlayers(std::vector<std::shared_ptr<Player>> players);
 	const int& GetPlayer();
 
+	void SetPossesed() { m_IsPossesed = true; }
+	bool IsPossesed() { return m_IsPossesed; }
+
 private:
 	virtual void StopFall();
 	virtual void StopDescend();
@@ -45,5 +48,7 @@ private:
 	std::vector<std::shared_ptr<Player>> m_Players;
 
 	std::vector<std::shared_ptr<Command>> m_cmdPlayerDeaths;
+
+	bool m_IsPossesed = false;
 };
 

@@ -58,7 +58,6 @@ protected:
     float m_CurrentFallSpeed{ 0.f };
     const unsigned int m_NrCols{ 8 };
     const unsigned int m_NrRows{ 1 };
-
 private:
     void UpdateLift();
     int m_Health = 3;

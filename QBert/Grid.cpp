@@ -339,6 +339,9 @@ void Grid::ConstructDiscs()
 
 void Grid::NewPiramid()
 {
+	for (auto& player : m_Players)
+		player->Reset();
+
 	m_NewRound = false;
 
 	unsigned short realCol;

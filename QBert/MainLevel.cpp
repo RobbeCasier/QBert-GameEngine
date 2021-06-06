@@ -9,12 +9,16 @@
 #include "Spawner.h"
 
 #include "PlayerController.h"
+#include "EnemyController.h"
 
 #include "GameObservers.h"
 
 #include <ServiceLocator.h>
 #include "QbertGameController.h"
 #include "InGameMenuUI.h"
+#include <GameTime.h>
+#include <FPS.h>
+#include "Grid.h"
 
 void MainLevel::Initialize()
 {
@@ -40,7 +44,7 @@ void MainLevel::Initialize()
 	//lives 1
 	text = ui->AddTextComponent("Lives", "LIVES: 3", font16, 0, 65);
 	std::shared_ptr<LivesDisplay> livesDisplayP1 = std::make_shared<LivesDisplay>(text);
-	m_pHUDScene->Add(go);
+	m_pHUDScene->AddObject(go);
 
 
 	//level
@@ -55,23 +59,23 @@ void MainLevel::Initialize()
 	//round
 	text = ui->AddTextComponent("Round", "ROUND: 1", font32, 0, 30);
 	std::shared_ptr<RoundsDisplay> roundDisplay = std::make_shared<RoundsDisplay>(text);
-	m_pHUDScene->Add(go);
+	m_pHUDScene->AddObject(go);
 
 	//grid
 	std::shared_ptr<EnemyFall> fallObserver = std::make_shared<EnemyFall>();
 	auto gridObj = std::make_shared<GameObject>();
-	auto grid = gridObj->AddComponent<Grid>();
-	grid->AddObserver(levelDisplay);
-	grid->AddObserver(roundDisplay);
-	grid->AddObserver(fallObserver);
-	grid->SetTopPiramid(9, 3);
+	m_pGrid = gridObj->AddComponent<Grid>();
+	m_pGrid->AddObserver(levelDisplay);
+	m_pGrid->AddObserver(roundDisplay);
+	m_pGrid->AddObserver(fallObserver);
+	m_pGrid->SetTopPiramid(9, 3);
 	LevelReader::GetInstance().Read(1, 1);
-	m_pGameScene->Add(gridObj);
+	m_pGameScene->AddObject(gridObj);
 
 	//player 1
 	go = std::make_shared<GameObject>();
 	auto player = go->AddComponent<Player>();
-	player->SetGrid(grid);
+	player->SetGrid(m_pGrid);
 	if (gameController.GetQbertGameMode() != GameMode::COOP)
 		player->SetStartLocation(9, 3);
 	else
@@ -81,7 +85,7 @@ void MainLevel::Initialize()
 	player->AddObserver(scoreDisplayP1);
 	std::vector<std::shared_ptr<Player>> players;
 	players.push_back(player);
-	m_pGameScene->Add(go);
+	m_pGameScene->AddObject(go);
 
 	int playerIndex = 0;
 	//controller input player 1
@@ -114,107 +118,106 @@ void MainLevel::Initialize()
 		//lives 2
 		text = ui->AddTextComponent("Lives", "LIVES: 3", font16, 0, 65);
 		std::shared_ptr<LivesDisplay> livesDisplayP2 = std::make_shared<LivesDisplay>(text);
-		m_pHUDScene->Add(go);
+		m_pHUDScene->AddObject(go);
 
 		go = std::make_shared<GameObject>();
-		player = go->AddComponent<Player>();
-		player->SetGrid(grid);
-		player->SetStartLocation(15, 9);
 
-		player->AddObserver(livesDisplayP2);
-		player->AddObserver(scoreDisplayP2);
-		players.push_back(player);
-		m_pGameScene->Add(go);
+			player = go->AddComponent<Player>();
+			player->SetGrid(m_pGrid);
+			player->AddObserver(livesDisplayP2);
+			player->AddObserver(scoreDisplayP2);
+			player->SetStartLocation(15, 9);
+			players.push_back(player);
+			m_pGameScene->AddObject(go);
 
 		int playerIndex = 1;
-		//controller input player 2
-		input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(players[playerIndex]), playerIndex);
-		input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(players[playerIndex]), playerIndex);
-		input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(players[playerIndex]), playerIndex);
-		input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(players[playerIndex]), playerIndex);
+			//controller input player 2
+			input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(player), playerIndex);
+			input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(player), playerIndex);
+			input.AddInput(ControllerButton::ButtonDOWN, std::make_unique<JumpBottomLeft>(player), playerIndex);
+			input.AddInput(ControllerButton::ButtonLEFT, std::make_unique<JumpTopLeft>(player), playerIndex);
 
-		//keyboard input player 2
-		input.AddInput(KeyboardKeys::Up, std::make_unique<JumpTopRight>(players[playerIndex]));
-		input.AddInput(KeyboardKeys::Right, std::make_unique<JumpBottomRight>(players[playerIndex]));
-		input.AddInput(KeyboardKeys::Down, std::make_unique<JumpBottomLeft>(players[playerIndex]));
-		input.AddInput(KeyboardKeys::Left, std::make_unique<JumpTopLeft>(players[playerIndex]));
+			//keyboard input player 2
+			input.AddInput(KeyboardKeys::Up, std::make_unique<JumpTopRight>(player));
+			input.AddInput(KeyboardKeys::Right, std::make_unique<JumpBottomRight>(player));
+			input.AddInput(KeyboardKeys::Down, std::make_unique<JumpBottomLeft>(player));
+			input.AddInput(KeyboardKeys::Left, std::make_unique<JumpTopLeft>(player));
 	}
 #pragma endregion
 
-	grid->ConstructPiramid(players);
-	grid->ConstructDiscs();
+	m_pGrid->ConstructPiramid(players);
+	m_pGrid->ConstructDiscs();
 
 
 	go = std::make_shared<GameObject>();
-	auto spawner = go->AddComponent<Spawner>();
-	spawner->SetGrid(grid);
-	spawner->SetPlayers(players);
-	spawner->LoadLevelData();
-	std::shared_ptr<PlayerDeath> playerDeath = std::make_shared<PlayerDeath>(spawner);
+	m_pGameScene->AddObject(go);
+	m_pSpawner = go->AddComponent<Spawner>();
+	m_pSpawner->SetGrid(m_pGrid);
+	m_pSpawner->SetPlayers(players);
+	m_pSpawner->LoadLevelData();
+	std::shared_ptr<PlayerDeath> playerDeath = std::make_shared<PlayerDeath>(m_pSpawner);
 	players[0]->AddObserver(playerDeath);
 	if (gameController.GetQbertGameMode() == GameMode::COOP)
 		players[1]->AddObserver(playerDeath);
 
-#pragma region InGameMenu
+#pragma region InGameMenuScene
 	go = std::make_shared<GameObject>();
 	go->AddComponent<InGameMenuUI>();
-	m_pInGameMenuScene->Add(go);
+	m_pInGameMenuScene->AddObject(go);
 #pragma endregion
 
-	dae::SceneManager::GetInstance().LoadScene("GameScene");
-	dae::SceneManager::GetInstance().LoadScene("HudScene");
+	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 24);
+	go = std::make_shared<GameObject>();
+	auto fps = go->AddComponent<FPS>();
+	fps->SetTextFontColor("FPS", font, SDL_Color{ 255, 255, 0 });
+	m_pHUDScene->AddObject(go);
 }
 
 void MainLevel::Update()
 {
-	//if (m_Grid != nullptr)
-	//{
-	//	//freeze time
-	//	if (GameContext::GetInstance().GetGameState() == GameState::GREENBALL)
-	//	{
-	//		m_FreezeTimer += Time::GetInstance().GetElapsedTime();
-	//		if (m_FreezeTimer >= m_FreezeTime)
-	//		{
-	//			m_FreezeTimer = 0.f;
-	//			GameContext::GetInstance().Play();
-	//		}
-	//		else
-	//			return;
-	//	}
-	//	//win time
-	//	else if (GameContext::GetInstance().GetGameState() == GameState::WIN)
-	//	{
-	//		m_Timer += Time::GetInstance().GetElapsedTime();
-	//		if (m_Timer >= m_WinTime)
-	//		{
-	//			m_Timer = 0.f;
-	//			//you can win in freeze mode -> reset time
-	//			m_FreezeTimer = 0.f;
-	//			GameContext::GetInstance().Play();
-	//		}
-	//		else
-	//			return;
-	//	}
-	//	//new level
-	//	if (m_Grid->NewLevel())
-	//	{
-	//		int lv = m_Grid->GetCurrentLevel();
-	//		int rnd = m_Grid->GetCurrentRound();
-	//		LevelReader::GetInstance().Read(lv, rnd);
-	//		m_Grid->NewPiramid();
-	//		m_Grid->NewDiscs();
-	//		for (auto player : m_Players)
-	//			player->Reset();
-	//		m_Spawner->Clear();
-	//		m_Spawner->LoadLevelData();
-	//	}
-	//	m_Spawner->Update();
-	//}
+	//freeze time
+	if (GameContext::GetInstance().GetGameState() == GameState::GREENBALL)
+	{
+		m_FreezeTimer += Time::GetInstance().GetElapsedTime();
+		if (m_FreezeTimer >= m_FreezeTime)
+		{
+			m_FreezeTimer = 0.f;
+			GameContext::GetInstance().Play();
+		}
+		else
+			return;
+	}
+	//win time
+	else if (GameContext::GetInstance().GetGameState() == GameState::WIN)
+	{
+		m_Timer += Time::GetInstance().GetElapsedTime();
+		if (m_Timer >= m_WinTime)
+		{
+			m_Timer = 0.f;
+			//you can win in freeze mode -> reset time
+			m_FreezeTimer = 0.f;
+			GameContext::GetInstance().Play();
+		}
+		else
+			return;
+	}
+		//new level
+	if (m_pGrid && m_pGrid->NewLevel())
+	{
+		int lv = m_pGrid->GetCurrentLevel();
+		int rnd = m_pGrid->GetCurrentRound();
+		LevelReader::GetInstance().Read(lv, rnd);
+		m_pGrid->NewPiramid();
+		m_pGrid->NewDiscs();
+		m_pSpawner->Clear();
+		m_pSpawner->LoadLevelData();
+	}
+	
 }
 
 void MainLevel::Deactivate()
 {
-	dae::SceneManager::GetInstance().UnloadScene("GameScene");
-	dae::SceneManager::GetInstance().UnloadScene("HudScene");
-	dae::SceneManager::GetInstance().UnloadScene("InGameMenu");
+	dae::SceneManager::GetInstance().RemoveScene("GameScene");
+	dae::SceneManager::GetInstance().RemoveScene("HudScene");
+	dae::SceneManager::GetInstance().RemoveScene("InGameMenu");
 }

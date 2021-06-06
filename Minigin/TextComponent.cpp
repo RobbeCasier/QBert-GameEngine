@@ -29,6 +29,9 @@ void dae::TextComponent::Update()
 
 void dae::TextComponent::Render(const glm::vec3& position)
 {
+	if (!m_pTexture)
+		return;
+
 	auto render = GetGameObject()->GetComponent<RenderComponent>();
 	glm::vec3 worldPos = m_pTransformComponent->GetPosition() + position;
 	render->Render(*m_pTexture, worldPos);
