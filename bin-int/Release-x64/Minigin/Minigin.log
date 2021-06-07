@@ -1,33 +1,4 @@
-﻿  MiniginPCH.cpp
-  imgui_impl_opengl2.cpp
-  imgui_impl_sdl.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  Font.cpp
-  FPS.cpp
-  GameController.cpp
-  GameObject.cpp
-  InputManager.cpp
-  Level.cpp
-  LevelManager.cpp
-  Main.cpp
-  Minigin.cpp
-  PlayerComponent.cpp
-  RenderComponent.cpp
-  Renderer.cpp
-  ResourceManager.cpp
-  Scene.cpp
-  SceneManager.cpp
-  SoundSystem.cpp
-  TextComponent.cpp
-  Texture2D.cpp
-  TextureComponent.cpp
-  Transform.cpp
-  Compiling...
-  UIComponent.cpp
+﻿  Scene.cpp
 SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
 SDL2_image.lib(SDL2_image.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored
 SDL2_ttf.lib(SDL2_ttf.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in SDL2.lib(SDL2.dll); second definition ignored

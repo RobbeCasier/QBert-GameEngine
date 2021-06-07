@@ -160,13 +160,13 @@ void Coily::CheckCollision()
 		if (players[i]->IsUsingLift())
 			continue;
 		auto playerRect = players[i]->GetRect();
-		playerRect /= 2.0f;
+		playerRect /= 1.5f;
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();
 		rect.h = rect.w = (float)m_CharacterWith;
 		rect.x = transform->GetPosition().x;
 		rect.y = transform->GetPosition().y;
-		rect /= 2.0f;
+		rect /= 1.5f;
 		//make it a square, so the player only has to worry about the landing
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{

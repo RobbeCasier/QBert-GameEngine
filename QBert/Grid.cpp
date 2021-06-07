@@ -77,6 +77,11 @@ glm::vec2 Grid::GetPos(const unsigned short& col, const unsigned short& row) con
 	return m_Cells[index]->GetSpritePos();
 }
 
+glm::vec2 Grid::GetTop() const
+{
+	return glm::vec2(m_TopCol, m_TopRow);
+}
+
 glm::vec2 Grid::GetColumnRow(const unsigned int& index) const
 {
 	int row = index / m_NrCols;

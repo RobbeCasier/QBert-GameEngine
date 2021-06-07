@@ -208,12 +208,13 @@ void Slick_Sam::CheckCollision()
 			continue;
 
 		auto playerRect = players[i]->GetRect();
-		Shape::Rect rect{};
+		playerRect /= 1.5f;
+		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();
+		rect.h = rect.w = (float)m_CharacterWidth;
 		rect.x = transform->GetPosition().x;
 		rect.y = transform->GetPosition().y;
-
-		rect.h = rect.w = (float)m_CharacterWidth;
+		rect /= 1.5f;
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{
 			m_cmdCatchs[i]->Execute();

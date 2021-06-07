@@ -185,15 +185,16 @@ void RedBall::CheckCollision()
 		if (players[i]->IsUsingLift())
 			continue;
 		auto playerRect = players[i]->GetRect();
-		playerRect /= 2.0f;
+		playerRect /= 1.5f;
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();
 		rect.h = rect.w = (float)m_CharacterWidth;
 		rect.x = transform->GetPosition().x;
 		rect.y = transform->GetPosition().y;
-		rect /= 2.0f;
+		rect /= 1.5f;
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{
+			ServiceLocator::GetSoundSystem().Play(10, 100);
 			m_cmdPlayerDeaths[i]->Execute();
 			return;
 		}

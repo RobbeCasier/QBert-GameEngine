@@ -90,6 +90,8 @@ void MainLevel::Initialize()
 	m_pGameScene->AddObject(go);
 
 	int playerIndex = 0;
+	input.AddController();
+	input.AddController();
 	//controller input player 1
 	input.AddInput(ControllerButton::ButtonUP, std::make_unique<JumpTopRight>(player), playerIndex);
 	input.AddInput(ControllerButton::ButtonRIGHT, std::make_unique<JumpBottomRight>(player), playerIndex);
@@ -166,12 +168,6 @@ void MainLevel::Initialize()
 	go->AddComponent<InGameMenuUI>();
 	m_pInGameMenuScene->AddObject(go);
 #pragma endregion
-
-	auto font = ResourceManager::GetInstance().LoadFont("Lingua.otf", 24);
-	go = std::make_shared<GameObject>();
-	auto fps = go->AddComponent<FPS>();
-	fps->SetTextFontColor("FPS", font, SDL_Color{ 255, 255, 0 });
-	m_pHUDScene->AddObject(go);
 }
 
 void MainLevel::Update()

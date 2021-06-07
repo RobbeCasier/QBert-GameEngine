@@ -56,6 +56,7 @@ public:
 	explicit CoilyFall(std::shared_ptr<PlayerComponent> coily) : Command(coily){}
 	void Execute() override
 	{
+		ServiceLocator::GetSoundSystem().Play(8, 100);
 		std::dynamic_pointer_cast<Coily>(m_Actor)->Fall();
 	}
 };

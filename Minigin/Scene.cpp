@@ -40,7 +40,6 @@ void dae::Scene::Remove()
 			m_Objects.erase(it);
 		}
 	}
-	//m_ObjectsToDelete.clear();
 }
 
 void dae::Scene::Update()

@@ -25,4 +25,7 @@ void MainGame::LoadGame() const
 	audio.RegisterAudio(5, "../sound/tune-2.wav");
 	audio.RegisterAudio(6, "../sound/lift.wav");
 	audio.RegisterAudio(7, "../sound/fall.wav");
+	audio.RegisterAudio(8, "../sound/snake-fall.wav");
+	audio.RegisterAudio(9, "../sound/speech.wav");
+	audio.RegisterAudio(10, "../sound/swear.wav");
 }

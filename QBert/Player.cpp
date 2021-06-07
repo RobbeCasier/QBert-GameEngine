@@ -57,7 +57,15 @@ void Player::StopFall()
 
 void Player::StopDescend()
 {
-	StopFall();
+	m_CurrentCol = m_DescendLocation.x;
+	m_CurrentRow = m_DescendLocation.y;
+	m_LiftLocation = m_Grid->GetPos(m_CurrentCol, m_CurrentRow);
+	--m_CurrentSpriteCol;
+	ChangeLookDirection();
+	m_CurrentFallSpeed = 0.f;
+	m_LiftLocation.y -= m_CharacterHeight / 2;
+	this->SetPosition({ m_LiftLocation, 0.f });
+	m_State = CharacterState::idle;
 }
 
 void Player::UpdateJump()
@@ -148,7 +156,8 @@ void Player::UpdateLift()
 		{
 			transformComp->SetPosition(m_LiftLocation.x, m_LiftLocation.y, 0.f);
 			m_State = CharacterState::descend;
-			m_LiftLocation = m_Grid->GetPos(9, 3);
+			m_DescendLocation = m_Grid->GetTop();
+			m_LiftLocation = m_Grid->GetPos(m_DescendLocation.x, m_DescendLocation.y);
 			m_LiftLocation.y -= m_CharacterHeight / 2;
 		}
 		else
@@ -197,8 +206,8 @@ void Player::SetGrid(std::shared_ptr<Grid> grid)
 
 void Player::SetStartLocation(const int& col, const int& row)
 {
-	m_StartCol = m_CurrentCol = col;
-	m_StartRow = m_CurrentRow = row;
+	m_StartCol = m_CurrentCol = m_DescendLocation.x = col;
+	m_StartRow = m_CurrentRow = m_DescendLocation.y = row;
 
 	if (m_Grid == nullptr)
 		return;
@@ -242,7 +251,8 @@ void Player::Lift()
 	m_State = CharacterState::elevate;
 
 	int rowOffset = 2;
-	m_LiftLocation = m_Grid->GetPos(m_StartCol, m_StartRow - rowOffset);
+	auto top = m_Grid->GetTop();
+	m_LiftLocation = m_Grid->GetPos(top.x, top.y - rowOffset);
 	std::shared_ptr<Transform> transformComp = m_GameObject->GetComponent<Transform>();
 	glm::vec3 curPos3 = transformComp->GetPosition();
 	glm::vec2 curPos2{ curPos3.x, curPos3.y };
@@ -251,7 +261,7 @@ void Player::Lift()
 	m_LiftDirection = glm::normalize(m_LiftDirection);
 
 	//distance, is how many blocks from eachother
-	m_LiftDistance = m_CurrentRow - (m_StartRow - rowOffset);
+	m_LiftDistance = m_CurrentRow - (top.y - rowOffset);
 }
 
 void Player::AddScore(const int& score)

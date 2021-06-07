@@ -47,9 +47,7 @@ bool dae::InputManager::ProcessInput()
 		{
 			controller->previousState = controller->currentState;
 			controller->UpdateState();
-			continue;
 		}
-		std::cout << "No Controller detected" << std::endl;
 	}
 
 	//keyboard

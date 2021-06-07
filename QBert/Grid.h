@@ -26,6 +26,7 @@ public:
 	void NewPiramid();
 	void CollectDiscs();
 	glm::vec2 GetPos(const unsigned short& col, const unsigned short& row) const;
+	glm::vec2 GetTop() const;
 	glm::vec2 GetColumnRow(const unsigned int& index) const;
 	int GetIndex(const unsigned int& col, const unsigned int& row) const;
 	int GetLiftXDir(const int& col);

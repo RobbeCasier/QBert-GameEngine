@@ -200,14 +200,16 @@ void Ugg_Wrongway::CheckCollision()
 			continue;
 
 		auto playerRect = players[i]->GetRect();
+		playerRect /= 1.5f;
 		Shape::Rect rect;
 		auto transform = m_GameObject->GetComponent<Transform>();
+		rect.h = rect.w = (float)m_CharacterWidth;
 		rect.x = transform->GetPosition().x;
 		rect.y = transform->GetPosition().y;
-		//make it a square, so the player only has to worry about the landing
-		rect.h = rect.w = (float)m_CharacterWidth;
+		rect /= 1.5f;
 		if (Utility::IsOverlappingRectangle(rect, playerRect))
 		{
+			ServiceLocator::GetSoundSystem().Play(9, 100);
 			m_cmdPlayerDeaths[i]->Execute();
 		}
 	}

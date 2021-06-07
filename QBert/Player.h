@@ -53,6 +53,7 @@ protected:
 
     glm::vec2 m_JumpLocation;
     glm::vec2 m_LiftLocation;
+    glm::vec2 m_DescendLocation;
 
     float m_CurrentFallSpeed{ 0.f };
     const unsigned int m_CharacterWith{ 32 };
