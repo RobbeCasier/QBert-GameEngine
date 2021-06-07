@@ -139,8 +139,8 @@ bool LevelReader::ReadBin(const std::string& path)
 	}
 
 	//read gametype
-	char gameTypeLength;
-	int size;
+	char gameTypeLength = 'a';
+	int size = 0;
 	std::string type;
 	input.read((char*)&gameTypeLength, sizeof(char));
 	size = (int)gameTypeLength;
@@ -156,12 +156,12 @@ bool LevelReader::ReadBin(const std::string& path)
 	input.read((char*)&m_LevelParameters.sideColor, sizeof(int));
 
 	//order
-	char amount;
+	char amount = 'a';
 	input.read((char*)&amount, sizeof(char));
 	int orders = (int)amount;
 	for (int i = 0; i < orders; ++i)
 	{
-		int nr;
+		int nr = 0;
 		input.read((char*)&nr, sizeof(int));
 		m_LevelParameters.order.push_back(nr);
 	}
@@ -171,7 +171,7 @@ bool LevelReader::ReadBin(const std::string& path)
 	size /= 2 * sizeof(int);
 	for (int i = 0; i < size; ++i)
 	{
-		int x, y;
+		int x = 0, y = 0;
 		input.read((char*)&x, sizeof(int));
 		input.read((char*)&y, sizeof(int));
 		m_LevelParameters.discsPositions.push_back({ x,y });
